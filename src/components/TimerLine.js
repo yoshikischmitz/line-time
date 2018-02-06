@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import uuid from 'uuid'
 
 import {CompositeDecorator, Editor, EditorState, Modifier, SelectionState, convertToRaw} from 'draft-js';
+import {getEntities} from '../utils'
 
 const humanInterval = require('human-interval');
 const TIME_BLOCK_REGEX = /^\[(.*)\]+/g;
@@ -49,8 +50,8 @@ class TimeSpan extends React.Component {
 
 	render(){
 		return (
-			<span>
-				<div class="bullet"></div>
+			<span className="timer">
+				<div className="bullet"></div>
 				<a
 					className="time"
 					data-offset-key={this.props.offsetKey}
@@ -63,6 +64,26 @@ class TimeSpan extends React.Component {
 };
 
 function timerStyle(contentBlock){
+}
+
+class SequenceTimer {
+	constructor(timers, onTimerEnd){
+		this.timers = timers
+		this.onTimerEnd = onTimerEnd
+		this.index = 0
+	}
+
+	start(){
+		setTimeout(() => { 
+			if(this.index < this.timers.length - 1){
+			  this.onTimerEnd(this.timers[this.index], false)
+				this.index++
+				this.start()
+			} else {
+			  this.onTimerEnd(this.timers[this.index], true)
+			}
+		}, this.timers[this.index])
+	}
 }
 
 class TimerLine extends React.Component {
@@ -82,6 +103,7 @@ class TimerLine extends React.Component {
 		this.focus = () => this.refs.editor.focus();
 		this.onChange = this.onChange.bind(this)
 		this.onStart = this.onStart.bind(this)
+		this.timerEnd = this.timerEnd.bind(this)
 	}
 
 	onChange(editorState) {
@@ -111,6 +133,7 @@ class TimerLine extends React.Component {
 				);
 
 				const newState = EditorState.set(editorState, {currentContent: contentStateWithInterval})
+
 				this.setState({editorState: newState})
 			} else {
 				this.setState({editorState: editorState})
@@ -121,14 +144,21 @@ class TimerLine extends React.Component {
 	}
 
 	onStart() {
-		// get the timers out of the editorstate:
-    const raw = convertToRaw(this.state.editorState.getCurrentContent())
+		const entities = getEntities(this.state.editorState, 'TIMER')
+		const intervals = entities.map((e) => e.entity.getData().interval)
+		const timer = new SequenceTimer(intervals, this.timerEnd)
+		timer.start()
+		this.setState({timer: timer})
+	}
+
+	timerEnd(time, last) {
+		console.log(time, last)
 	}
 
 	render() {
 		return (
-			<div>
-				<div style={styles.editor} onClick={this.focus}>
+			<div className="container">
+				<div className="editor" style={styles.editor} onClick={this.focus}>
 					<Editor
 						editorState={this.state.editorState}
 						onChange={this.onChange}
@@ -137,9 +167,8 @@ class TimerLine extends React.Component {
 						blockStyleFn={timerStyle}
 					/>
 				</div>
-				<button onClick={this.onStart}>
-					Start
-				</button>
+				<div className="playback-button play" onClick={this.onStart}>
+				</div>
 			</div>
 		);
 	}
@@ -147,11 +176,7 @@ class TimerLine extends React.Component {
 
 const styles = {
 	editor: {
-		border: '1px solid #ddd',
-		cursor: 'text',
-		fontSize: 16,
-		minHeight: 40,
-		padding: 10,
+		cursor: 'text'
 	}
 }
 

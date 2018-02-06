@@ -1,13 +1,14 @@
-.App {
-	width: 400px;
-	margin: auto;
-	margin-top: 40px;
+body {
+	background-color: rgb(239, 236, 234);
 }
 
-.time {
-	font-family: monospace;
-	color: blue;
-	margin-top: 2em;
+.App {
+	background-color: white;
+	width: 500px;
+	margin: auto;
+	margin-top: 40px;
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+	margin-bottom: 100px;
 }
 
 .time:hover{
@@ -16,6 +17,67 @@
 
 button {
 	padding: 10px;
-	float: right;
 	margin-top: 4px;
+}
+
+.container {
+	position: relative;
+}
+
+.editor {
+	height: 100%;
+	width: 400px;
+	min-height: 200px;
+	padding-bottom: 80px;
+	padding-left: 50px;
+	padding-top: 40px;
+	line-height: 1.2em;
+	font-size: 1em;
+}
+
+.time-line {
+	height: 100%;
+	position: absolute;
+}
+
+.timer {
+	position: relative;
+	top: 0px;
+	right: 0px;
+	left: 0px;
+  line-height: 1.8em;
+	font-size: 1.5em;
+}
+
+.time {
+	font-family: monospace;
+	color: blue;
+}
+
+.bullet {
+	width: 0.3em;
+	height: 0.3em;
+	background-color: grey;
+	border-radius: 50%;
+	position: absolute;
+	left: -19px;
+	top: 8px;
+}
+
+.playback-button {
+	height: 60px;
+	width: 60px;
+	display: block;
+	position: absolute;
+	bottom: 15px;
+	left: 420px;
+	filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
+}
+
+.play {
+	background: url('./play-button.svg');
+}
+
+.pause {
+	background: url('./pause-button.svg');
 }
