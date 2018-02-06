@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import uuid from 'uuid'
+import PlayPauseButton from './PlayPauseButton'
+import SequenceTimer from '../SequenceTimer'
 
 import {CompositeDecorator, Editor, EditorState, Modifier, SelectionState, convertToRaw} from 'draft-js';
 import {getEntities} from '../utils'
@@ -66,26 +68,6 @@ class TimeSpan extends React.Component {
 function timerStyle(contentBlock){
 }
 
-class SequenceTimer {
-	constructor(timers, onTimerEnd){
-		this.timers = timers
-		this.onTimerEnd = onTimerEnd
-		this.index = 0
-	}
-
-	start(){
-		setTimeout(() => { 
-			if(this.index < this.timers.length - 1){
-			  this.onTimerEnd(this.timers[this.index], false)
-				this.index++
-				this.start()
-			} else {
-			  this.onTimerEnd(this.timers[this.index], true)
-			}
-		}, this.timers[this.index])
-	}
-}
-
 class TimerLine extends React.Component {
 	constructor() {
 		super();
@@ -102,7 +84,8 @@ class TimerLine extends React.Component {
 
 		this.focus = () => this.refs.editor.focus();
 		this.onChange = this.onChange.bind(this)
-		this.onStart = this.onStart.bind(this)
+		this.onPlay = this.onPlay.bind(this)
+		this.onPause = this.onPause.bind(this)
 		this.timerEnd = this.timerEnd.bind(this)
 	}
 
@@ -143,12 +126,20 @@ class TimerLine extends React.Component {
 		}
 	}
 
-	onStart() {
-		const entities = getEntities(this.state.editorState, 'TIMER')
-		const intervals = entities.map((e) => e.entity.getData().interval)
-		const timer = new SequenceTimer(intervals, this.timerEnd)
-		timer.start()
-		this.setState({timer: timer})
+	onPlay() {
+		if(this.state.timer){
+			this.state.timer.start()
+		} else {
+			const entities = getEntities(this.state.editorState, 'TIMER')
+			const intervals = entities.map((e) => e.entity.getData().interval)
+			const timer = new SequenceTimer(intervals, this.timerEnd)
+			timer.start()
+			this.setState({timer: timer})
+		}
+	}
+
+	onPause(){
+		this.state.timer.pause()
 	}
 
 	timerEnd(time, last) {
@@ -167,8 +158,7 @@ class TimerLine extends React.Component {
 						blockStyleFn={timerStyle}
 					/>
 				</div>
-				<div className="playback-button play" onClick={this.onStart}>
-				</div>
+				<PlayPauseButton onPlay={this.onPlay} onPause={this.onPause}/>
 			</div>
 		);
 	}
