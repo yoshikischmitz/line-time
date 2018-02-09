@@ -8,11 +8,12 @@ export function updateChunkState(chunkId, editorState){
 	}
 }
 
-export function addChunk(chunkId, intervalContent, intervalSeconds){
+export function addChunk(chunkId, editorState, intervalContent, intervalSeconds){
 	return {
 		type: AddChunk,
 		id: chunkId,
 		intervalContent: intervalContent,
-		intervalSeconds: intervalSeconds
+		intervalSeconds: intervalSeconds,
+		editorState: editorState
 	}
 }
