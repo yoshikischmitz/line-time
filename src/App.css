@@ -1,87 +1,61 @@
 body {
 	background-color: rgb(239, 236, 234);
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
 }
 
 .App {
 	background-color: white;
-	width: 600px;
-	margin: auto;
-	margin-top: 40px;
-	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-	margin-bottom: 100px;
-}
-
-.time:hover{
-	cursor: pointer;
-}
-
-button {
-	padding: 10px;
-	margin-top: 4px;
-}
-
-.container {
-	position: relative;
-}
-
-.editor {
-	height: 100%;
+	min-height: 300px;
 	width: 400px;
-	min-height: 200px;
-	padding-bottom: 80px;
-	padding-left: 50px;
-	padding-top: 40px;
-	line-height: 1.2em;
-	font-size: 1em;
-}
-
-.time-line {
+	margin: auto;
+	margin-right: 0px;
+	margin-top: 0px;
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+	padding-left: 33px;
+	padding-right: 300px;
+	padding-top: 90px;
+	margin-top: -10px;
+	min-height: 700px;
 	height: 100%;
-	position: absolute;
-}
-
-.timer {
-	position: relative;
-	top: 0px;
-	right: 0px;
-	left: 0px;
-  line-height: 1.8em;
-	font-size: 1.5em;
-}
-
-.time {
-	font-family: monospace;
-	color: blue;
 }
 
 .bullet {
-	width: 0.3em;
-	height: 0.3em;
+	width: 0.6em;
+	height: 0.6em;
 	background-color: grey;
 	border-radius: 50%;
 	position: absolute;
-	left: -19px;
-	top: 8px;
+	left: -38px;
+	top: 2px;
 }
 
-.player-button {
-	height: 60px;
-	width: 60px;
+.editor {
 	display: block;
+	font-size: 16px;
+	width: 530px;
+	margin-bottom: 30px;
+}
+
+.chunk {
+	margin-top: 30px;
+	position: relative;
+}
+
+.chunk .bottom-boundary{
+	border-bottom: 1px solid #F2F2F2;
+	width: 500px;
+}
+
+.chunk .interval {
+	font-family: monospace;
+	font-size: 18px;
+	font-weight: bold;
+	color: #9E9E9E;
 	position: absolute;
-	bottom: 15px;
-	left: 520px;
-	filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
-}
-
-.playing {
-	background: url('./pause-button.svg');
-}
-
-.paused {
-	background: url('./play-button.svg');
-}
-
-.current {
-	background-color: yellow;
+	width: 9em;
+	text-align: right;
+	left: -230px;
+	top: -3px;
 }

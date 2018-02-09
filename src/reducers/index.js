@@ -18,12 +18,12 @@ const initialState = {
 	},
 	chunks: {
 		[chunk1] : {
-			intervalContent: "[25 minutes]",
+			intervalContent: "25 minutes",
 			intervalSeconds: 1500,
 			editorState: EditorState.createEmpty()
 		},
 		[chunk2] : {
-			intervalContent: "[5 minutes]",
+			intervalContent: "5 minutes",
 			intervalSeconds: 300,
 			editorState: EditorState.createEmpty()
 		}
