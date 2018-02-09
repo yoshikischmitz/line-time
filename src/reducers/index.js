@@ -20,11 +20,13 @@ const initialState = {
 		[chunk1] : {
 			intervalContent: "25 minutes",
 			intervalSeconds: 1500,
+			complete: true,
 			editorState: EditorState.createEmpty()
 		},
 		[chunk2] : {
 			intervalContent: "5 minutes",
 			intervalSeconds: 300,
+			complete: false,
 			editorState: EditorState.createEmpty()
 		}
 	}

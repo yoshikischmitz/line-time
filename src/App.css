@@ -23,17 +23,8 @@ body {
 .chunk {
 	padding-top: 30px;
 	position: relative;
-	border-left: solid grey 2px;
 	padding-left: 33px;
 	margin-left: -2px;
-}
-
-.chunk:first-child {
-	border-image: linear-gradient(to top, grey 60%, rgba(0, 0, 0, 0)) 1 100%;
-}
-
-.chunk:last-child {
-	border-image: linear-gradient(to bottom, grey 60%, rgba(0, 0, 0, 0)) 1 100%;
 }
 
 .bullet {

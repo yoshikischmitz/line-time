@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = (state, ownProps) => {
 	const chunk = state.chunks[ownProps.id]
-	return chunk
+	return Object.assign({}, chunk, ownProps)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)
