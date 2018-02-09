@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import TimerLine from './components/TimerLine'
+import '../App.css';
+import CurrentNote from '../containers/CurrentNote'
+
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-				<TimerLine />
+				<CurrentNote />
       </div>
     );
   }

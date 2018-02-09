@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import uuid from 'uuid'
 import PlayPauseButton from './PlayPauseButton'
-import SequenceTimer from '../SequenceTimer'
+import SequenceTimer from '../utils/SequenceTimer'
 
 import {CompositeDecorator, Editor, EditorState, Modifier, SelectionState, convertToRaw} from 'draft-js';
 import {getEntities} from '../utils'
@@ -38,21 +38,18 @@ function findWithRegex(regex, contentBlock, callback) {
 class TimeSpan extends React.Component {
 	constructor(){
 		super()
-		this.state = {id: uuid(), timerStarted: false}
-		this.timer = this.timer.bind(this)
-	}
-
-	timer(){
-		console.log("hi");
-	}
-
-	componentWillUnmount(){
-		clearInterval(this.state.interval)
+		this.state = {id: uuid()}
 	}
 
 	render(){
+		const myData = this.props.contentState.getEntity(this.props.entityKey).getData();
+		let classes = "timer"
+		if(myData.current){
+			classes += " current"
+		}
+		console.log("got updated in Timespan", myData)
 		return (
-			<span className="timer">
+			<span className={classes}>
 				<div className="bullet"></div>
 				<a
 					className="time"
@@ -80,12 +77,12 @@ class TimerLine extends React.Component {
 
 		this.state = {
 			editorState: EditorState.createEmpty(compositeDecorator),
+			playing: false
 		};
 
 		this.focus = () => this.refs.editor.focus();
 		this.onChange = this.onChange.bind(this)
-		this.onPlay = this.onPlay.bind(this)
-		this.onPause = this.onPause.bind(this)
+		this.onClick = this.onClick.bind(this)
 		this.timerEnd = this.timerEnd.bind(this)
 	}
 
@@ -105,7 +102,7 @@ class TimerLine extends React.Component {
 				const contentStateWithEntity = contentState.createEntity(
 					'TIMER',
 					'IMMUTABLE',
-					{interval: interval}
+					{interval: interval, content: text}
 				);
 
 				const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
@@ -126,24 +123,74 @@ class TimerLine extends React.Component {
 		}
 	}
 
-	onPlay() {
-		if(this.state.timer){
-			this.state.timer.start()
+	onClick() {
+	  this.updateHighlight(0)
+		if(this.state.playing){
+		  this.state.timer.pause()
+			this.setState({playing: false})
 		} else {
-			const entities = getEntities(this.state.editorState, 'TIMER')
-			const intervals = entities.map((e) => e.entity.getData().interval)
-			const timer = new SequenceTimer(intervals, this.timerEnd)
-			timer.start()
-			this.setState({timer: timer})
+			let timer = this.state.timer
+			if(timer){
+				this.state.timer.start()
+				this.setState({playing: true})
+			  this.updateHighlight(timer.index)
+			} else {
+				const entities = getEntities(this.state.editorState, 'TIMER')
+				const intervals = entities.map((e) => e.entity.getData().interval)
+				if(intervals.length > 0){
+					timer = new SequenceTimer(intervals, this.timerEnd)
+					timer.start()
+					this.setState({timer: timer, playing: true})
+			    this.updateHighlight(timer.index)
+				}
+			}
 		}
 	}
 
-	onPause(){
-		this.state.timer.pause()
+	updateHighlight(index){
+		const editorState = this.state.editorState
+		const entities = getEntities(editorState, 'TIMER')
+		const currentEntity = entities[index]
+	  const contentState = this.state.editorState.getCurrentContent()
+		const newContent = contentState.mergeEntityData(
+			currentEntity.entityKey,
+			{current: true}
+		)
+
+		const stateWithUpdatedEntity = EditorState.set(editorState, {currentContent: newContent})
+
+		this.setState({editorState: stateWithUpdatedEntity}, () => { 
+		   this.setState({editorState: EditorState.forceSelection(this.state.editorState, this.state.editorState.getSelection())})
+		})
+	}
+
+	notify(notification){
+		const options ={
+			icon: "https://cdn0.iconfinder.com/data/icons/feather/96/clock-512.png"
+		}
+		if(Notification.permission === "granted"){
+			new Notification(notification, options)
+		} else {
+			Notification.requestPermission(function(permission){
+				if (permission === "granted") {
+					new Notification(notification, options);
+				}
+			})
+		}
 	}
 
 	timerEnd(time, last) {
-		console.log(time, last)
+		if(last){
+			this.setState({playing: false})
+		} 
+		const entities = getEntities(this.state.editorState, 'TIMER')
+		const currentEntity = entities[this.state.timer.index + 1]
+		if(currentEntity){
+			const entity = currentEntity.entity;
+			this.notify(entity.getData().content)
+		} else {
+			this.notify("You're done!")
+		}
 	}
 
 	render() {
@@ -158,7 +205,7 @@ class TimerLine extends React.Component {
 						blockStyleFn={timerStyle}
 					/>
 				</div>
-				<PlayPauseButton onPlay={this.onPlay} onPause={this.onPause}/>
+				<PlayPauseButton playing={this.state.playing} onClick={this.onClick} />
 			</div>
 		);
 	}

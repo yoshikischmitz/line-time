@@ -4,7 +4,7 @@ body {
 
 .App {
 	background-color: white;
-	width: 500px;
+	width: 600px;
 	margin: auto;
 	margin-top: 40px;
 	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
@@ -64,13 +64,13 @@ button {
 	top: 8px;
 }
 
-.playback-button {
+.player-button {
 	height: 60px;
 	width: 60px;
 	display: block;
 	position: absolute;
 	bottom: 15px;
-	left: 420px;
+	left: 520px;
 	filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
 }
 
@@ -80,4 +80,8 @@ button {
 
 .paused {
 	background: url('./play-button.svg');
+}
+
+.current {
+	background-color: yellow;
 }

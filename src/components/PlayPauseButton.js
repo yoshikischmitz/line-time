@@ -1,29 +1,17 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-export default class PlayPauseButton extends Component {
-	constructor(props){
-		super(props)
-		this.state = {playerState: 'paused'}
-		this.onClick = this.onClick.bind(this)
-	}
-
-	onClick(){
-		let newState
-		if(this.state.playerState === 'paused'){
-			newState = 'playing'
-			this.props.onPlay()
-		} else {
-			newState = 'paused'
-			this.props.onPause()
-		}
-		this.setState({playerState: newState})
-	}
-
-	render(){
-		let classes = ["playback-button", this.state.playerState].join(" ")
-		return(
-			<div className={classes} onClick={this.onClick}>
-			</div>
-		)
-	}
+const PlayPauseButton = ({playing, onClick}) => {
+	const stateClass = playing ? "playing" : "paused"
+	return (
+		<div className={["player-button", stateClass].join(" ")} onClick={onClick}>
+	  </div>
+	)
 }
+
+PlayPauseButton.propTypes = {
+	playing: PropTypes.bool.isRequired,
+	onClick: PropTypes.func.isRequired
+}
+
+export default PlayPauseButton
