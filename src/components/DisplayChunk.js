@@ -9,7 +9,7 @@ export default ({intervalContent, intervalSeconds, editorState, onChange, before
 	const color = "grey"
 
 	let style = {
-		borderLeft: `solid ${ color } 2px`
+		borderLeft: `solid ${ color } 3px`
 	}
 
 	if(first){
