@@ -45,8 +45,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		keyBindingFn: (e, state) => {
 			if(e.keyCode === 32){
 				const text = getText(state)
+				const offset = state.getSelection().getStartOffset()
 				const interval = matchTime(text)
-				if(interval){
+				if(interval && offset === interval.text.length + 2){
 					return 'space-after-interval'
 				}
 			} else if(e.keyCode === 8){
