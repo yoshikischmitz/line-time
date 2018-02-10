@@ -2,11 +2,6 @@ import React from 'react'
 import { Editor } from 'draft-js'
 import {highlightBlue, darkGrey} from '../colors'
 
-function linearGradient(direction, colorStart, colorEnd) {
-	colorEnd = colorEnd || "rgba(0, 0, 0, 0)"
-  return `linear-gradient(to ${ direction }, ${ colorStart } 60%, ${ colorEnd }) 1 100%`
-}
-
 export default class DisplayChunk extends React.Component{
 	constructor(props){
 		super(props)
@@ -49,13 +44,16 @@ export default class DisplayChunk extends React.Component{
 		}
 
 		if(first){
-		  topStyle.borderImage = linearGradient("top", topColor)
+		  topStyle = {}
 		} else if(last){
-		  bottomStyle.borderImage = linearGradient("bottom", bottomColor)
+		  bottomStyle = {}
 		} 
 
 		let editorStyle = {
 			borderLeft: `solid ${ bottomColor } ${ bottomBorderWidth }`
+		}
+		if(last){
+			editorStyle = {}
 		}
 
 		let style = {}
