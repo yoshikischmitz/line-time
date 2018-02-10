@@ -21,20 +21,23 @@ body {
 }
 
 .chunk {
-	padding-top: 30px;
 	position: relative;
-	padding-left: 33px;
-	margin-left: -2px;
+	margin-left: -3px;
+}
+
+.chunk .separator{
+	height: 30px;
+	width: 100%;
 }
 
 .bullet {
-	width: 0.6em;
-	height: 0.6em;
+	width: 0.7em;
+	height: 0.7em;
 	background-color: grey;
 	border-radius: 50%;
 	position: absolute;
-	left: -6px;
-	top: 30px;
+	left: -3px;
+	top: 28px;
 }
 
 .checkmark {
@@ -43,7 +46,7 @@ body {
 	background-image: url('./checkmark.svg');
 	border-radius: 50%;
 	position: absolute;
-	left: -12px;
+	left: -8px;
 	top: 24px;
 }
 
@@ -51,7 +54,7 @@ body {
 	display: block;
 	font-size: 16px;
 	width: 530px;
-	margin-bottom: 30px;
+	padding-left: 33px;
 }
 
 .chunk .bottom-boundary{

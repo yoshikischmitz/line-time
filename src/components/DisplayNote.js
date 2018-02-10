@@ -4,7 +4,7 @@ import Chunk from '../containers/Chunk'
 export default ({chunks}) => (
 	<div>
 		{
-			chunks.map((id, index) => {
+			chunks.map((c, index) => {
 				let first = false
 				let last = false
 				if(index === 0){
@@ -13,7 +13,7 @@ export default ({chunks}) => (
 				if(index + 1 === chunks.length){
 					last = true;
 				}
-				return <Chunk id={id} first={first} last={last}/>
+				return <Chunk id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
 			})
 		}
 	</div>
