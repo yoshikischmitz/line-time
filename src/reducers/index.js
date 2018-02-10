@@ -1,36 +1,51 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, convertToRaw} from 'draft-js'
 import {UpdateChunk, AddChunk} from '../actions/types'
+import humanInterval from 'human-interval'
 
-const current = uuid()
-const chunk1 = uuid()
-const chunk2 = uuid()
+function editorFromText(text){
+	const content = ContentState.createFromText(text)
+	return EditorState.createWithContent(content)
+}
 
-const initialState = {
-	currentNote: current,
-	notes: {
-		[current]: {
-			chunks: [
-				chunk1,
-				chunk2
-			]
-		}
-	},
-	chunks: {
-		[chunk1] : {
-			intervalContent: "25 minutes",
-			intervalSeconds: 1500,
-			complete: true,
-			editorState: EditorState.createEmpty()
+function chunk(intervalText, text, complete){
+	return {
+		intervalContent: intervalText,
+		intervalSeconds: humanInterval(intervalText),
+		complete: complete,
+		editorState: editorFromText(text)
+	}
+}
+
+function generateInitialState(){
+	const current = uuid()
+	const chunk1 = uuid()
+	const chunk2 = uuid()
+	const chunk3 = uuid()
+	const chunk4 = uuid()
+
+	return {
+		currentNote: current,
+		notes: {
+			[current]: {
+				chunks: [
+					chunk1,
+					chunk2,
+					chunk3,
+					chunk4
+				]
+			}
 		},
-		[chunk2] : {
-			intervalContent: "5 minutes",
-			intervalSeconds: 300,
-			complete: false,
-			editorState: EditorState.createEmpty()
+		chunks: {
+			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
+			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
+			[chunk3] : chunk("25 minutes", "Take over the galaxy", false),
+			[chunk4] : chunk("5 minutes", "Take another break", false)
 		}
 	}
 }
+
+const initialState = generateInitialState()
 
 function getSelectedText(contentState, selection){
   const startKey   = selection.getStartKey();
