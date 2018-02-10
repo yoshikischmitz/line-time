@@ -230,7 +230,6 @@ function mergeChunkUp(state, action){
 
 		// 1. insert interval back into text:
 		const newContent = insertTextAtCursor(currentChunk.editorState, "[" + currentChunk.intervalContent + "]")
-		const appendText = "\n\n" + contentToString(newContent)
 
  		// 2. add the text to the chunk above the current one:
 		const endSelection = createEndSelection(upperChunk.editorState)
