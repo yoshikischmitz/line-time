@@ -41,7 +41,7 @@ export default class DisplayChunk extends React.Component{
 				<div className="interval" style={complete ? {textDecoration: "line-through"} : {}}>
 					{ intervalContent }
 				</div>
-				<div className="bullet" />
+				<div className={complete ? "checkmark" : "bullet"} />
 				<div className="editor">
 					<Editor 
 						editorState={ editorState } 
