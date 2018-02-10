@@ -1,4 +1,4 @@
-import { UpdateChunk, AddChunk } from './types'
+import { UpdateChunk, AddChunk, MergeChunkUp} from './types'
 
 export function updateChunkState(chunkId, editorState){
 	return {
@@ -15,5 +15,12 @@ export function addChunk(chunkId, editorState, intervalContent, intervalSeconds)
 		intervalContent: intervalContent,
 		intervalSeconds: intervalSeconds,
 		editorState: editorState
+	}
+}
+
+export function mergeChunkUp(chunkId){
+	return {
+		type: MergeChunkUp,
+		id: chunkId
 	}
 }

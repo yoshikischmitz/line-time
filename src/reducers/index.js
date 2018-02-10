@@ -1,6 +1,6 @@
 import uuid from 'uuid'
-import {EditorState, ContentState, Modifier, convertToRaw} from 'draft-js'
-import {UpdateChunk, AddChunk} from '../actions/types'
+import {EditorState, ContentState, SelectionState, Modifier, convertToRaw} from 'draft-js'
+import {UpdateChunk, AddChunk, MergeChunkUp} from '../actions/types'
 import humanInterval from 'human-interval'
 
 function editorFromText(text){
@@ -179,6 +179,69 @@ function addChunk(state, action){
 	return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate})
 }
 
+function insertTextAtCursor(editorState, text){
+	const selection = editorState.getSelection()
+	const content = editorState.getCurrentContent()
+	return Modifier.insertText(content, selection, text)
+}
+
+function createEndSelection(editorState){
+	const content = editorState.getCurrentContent()
+	const lastBlock = content.getLastBlock()
+	const lastBlockSelection = SelectionState.createEmpty(lastBlock.getKey())
+  return lastBlockSelection.merge({
+		anchorOffset: lastBlock.getLength(), 
+		focusKey: lastBlock.getKey(), 
+		focusOffset: lastBlock.getLength()
+	})
+}
+
+function contentToString(content){
+  return convertToRaw(content).blocks.map((x) => x.text).join("\n")
+}
+
+function removeChunk(note, index){
+	const chunks = Object.assign([], note.chunks)
+	console.log(chunks)
+  chunks.splice(index, 1)
+	return chunks
+}
+
+function mergeChunkUp(state, action){
+	const currentNote = state.notes[state.currentNote]
+	const chunkId = action.id
+	const currentChunk = state.chunks[chunkId]
+	const currentChunkIndex = currentNote.chunks.indexOf(chunkId)
+	const upperChunkIndex = currentChunkIndex - 1
+
+	if(upperChunkIndex >= 0){
+		const upperChunkId = currentNote.chunks[upperChunkIndex]
+		const upperChunk = state.chunks[upperChunkId]
+		// 1. insert interval back into text:
+		const newContent = insertTextAtCursor(currentChunk.editorState, "[" + currentChunk.intervalContent + "]")
+		const appendText = "\n" + contentToString(newContent)
+ 		// 2. add the text to the chunk above the current one:
+		const endSelection = createEndSelection(upperChunk.editorState)
+		const updatedChunkContent = Modifier.insertText(upperChunk.editorState.getCurrentContent(), endSelection, appendText)
+		// 3. delete the current chunk:
+		// 4. update state:
+		const newChunk = Object.assign({}, upperChunk, {
+			editorState: EditorState.push(upperChunk.editorState, updatedChunkContent, "merge-up")
+		})
+
+		const newArr = removeChunk(currentNote, currentChunkIndex)
+		const newNote = Object.assign({}, state.notes[state.currentNote], {chunks: newArr})
+
+		let chunks = Object.assign({}, state.chunks, {[upperChunkId] : newChunk})
+		delete(chunks[chunkId])
+
+		const notes = Object.assign({}, state.notes, {[state.currentNote] : newNote})
+		const newState = Object.assign({}, state, {chunks: chunks, notes: notes})
+
+		return newState
+	}
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
@@ -190,6 +253,8 @@ export default (state = initialState, action) => {
 		}
 		case(AddChunk):
 			return addChunk(state, action)
+		case(MergeChunkUp):
+			return mergeChunkUp(state, action)
 		default: {
 			return state
 		}

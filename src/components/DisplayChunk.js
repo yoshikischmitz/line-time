@@ -5,7 +5,7 @@ function linearGradient(direction, color) {
   return `linear-gradient(to ${ direction }, ${ color } 60%, rgba(0, 0, 0, 0)) 1 100%`
 }
 
-export default ({intervalContent, intervalSeconds, editorState, onChange, beforeInput, complete, first, last}) => {
+export default ({intervalContent, intervalSeconds, editorState, onChange, keyBindingFn, handleKeyCommand, complete, first, last}) => {
 	const color = "grey"
 
 	let style = {
@@ -33,7 +33,8 @@ export default ({intervalContent, intervalSeconds, editorState, onChange, before
 				<Editor 
 					editorState={ editorState } 
 					onChange={ onChange }
-					handleBeforeInput={beforeInput}
+					keyBindingFn={(e) => keyBindingFn(e, editorState)}
+					handleKeyCommand={(command) => handleKeyCommand(command, editorState)}
 				/>
 			</div>
 			<div className="bottom-boundary" />
