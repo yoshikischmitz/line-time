@@ -19,7 +19,7 @@ export default ({intervalContent, intervalSeconds, editorState, onChange, before
 	}
 
 	if(complete){
-		style.color = "grey"
+		style.color = "#BDBDBD",
 		style.textDecoration = "line-through"
 	}
 
