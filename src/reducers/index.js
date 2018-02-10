@@ -26,6 +26,7 @@ function generateInitialState(){
 
 	return {
 		currentNote: current,
+		focus: chunk1,
 		notes: {
 			[current]: {
 				chunks: [
@@ -39,7 +40,7 @@ function generateInitialState(){
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
 			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
-			[chunk3] : chunk("25 minutes", "Take over the galaxy", false),
+			[chunk3] : chunk("25 minutes", "Launch a Roadster into space", false),
 			[chunk4] : chunk("5 minutes", "Take another break", false)
 		}
 	}
@@ -176,7 +177,7 @@ function addChunk(state, action){
 		[state.currentNote] : noteUpdate
 	})
 
-	return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate})
+	return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate, focus: newChunkId})
 }
 
 function insertTextAtCursor(editorState, text){
@@ -207,6 +208,15 @@ function removeChunk(note, index){
 	return chunks
 }
 
+function appendBlocks(content, appendedBlocks){
+	const blocks = content.getBlockMap()
+	let appended = blocks
+	appendedBlocks.forEach((b) => {
+	  appended = appended.set(b.getKey(), b)
+	})
+	return content.set('blockMap', appended)
+}
+
 function mergeChunkUp(state, action){
 	const currentNote = state.notes[state.currentNote]
 	const chunkId = action.id
@@ -217,16 +227,24 @@ function mergeChunkUp(state, action){
 	if(upperChunkIndex >= 0){
 		const upperChunkId = currentNote.chunks[upperChunkIndex]
 		const upperChunk = state.chunks[upperChunkId]
+
 		// 1. insert interval back into text:
 		const newContent = insertTextAtCursor(currentChunk.editorState, "[" + currentChunk.intervalContent + "]")
-		const appendText = "\n" + contentToString(newContent)
+		const appendText = "\n\n" + contentToString(newContent)
+
  		// 2. add the text to the chunk above the current one:
 		const endSelection = createEndSelection(upperChunk.editorState)
-		const updatedChunkContent = Modifier.insertText(upperChunk.editorState.getCurrentContent(), endSelection, appendText)
+		const updatedChunkContent = appendBlocks(upperChunk.editorState.getCurrentContent(),newContent.getBlockMap())
+
+    const mergedChunk = EditorState.push(upperChunk.editorState, updatedChunkContent, "merge-up")
+		const offset = currentChunk.intervalContent.length + 2
+		const selection = currentChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
+		const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
+
 		// 3. delete the current chunk:
 		// 4. update state:
 		const newChunk = Object.assign({}, upperChunk, {
-			editorState: EditorState.push(upperChunk.editorState, updatedChunkContent, "merge-up")
+			editorState: mergedChunkWithFocus
 		})
 
 		const newArr = removeChunk(currentNote, currentChunkIndex)
@@ -236,7 +254,7 @@ function mergeChunkUp(state, action){
 		delete(chunks[chunkId])
 
 		const notes = Object.assign({}, state.notes, {[state.currentNote] : newNote})
-		const newState = Object.assign({}, state, {chunks: chunks, notes: notes})
+		const newState = Object.assign({}, state, {chunks: chunks}, {notes: notes}, {focus: upperChunkId})
 
 		return newState
 	}

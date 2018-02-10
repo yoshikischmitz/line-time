@@ -75,7 +75,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = (state, ownProps) => {
 	const chunk = state.chunks[ownProps.id]
-	return Object.assign({}, chunk, ownProps)
+	const focused = state.focus === ownProps.id
+	return Object.assign({}, chunk, ownProps, {focused: focused})
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)
