@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import '../App.css';
 import CurrentNote from '../containers/CurrentNote'
+import Timer from '../containers/Timer'
 
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-				<CurrentNote />
-      </div>
+			<div>
+				<div className="App">
+					<CurrentNote />
+				</div>
+				<Timer />
+		  </div>
     );
   }
 }

@@ -1,5 +1,10 @@
-import { UpdateChunk, AddChunk, MergeChunkUp} from './types'
+import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick } from './types'
 
+export function tick(){
+	return {
+		type: Tick
+	}
+}
 export function updateChunkState(chunkId, editorState){
 	return {
 		type: UpdateChunk,
@@ -22,5 +27,11 @@ export function mergeChunkUp(chunkId){
 	return {
 		type: MergeChunkUp,
 		id: chunkId
+	}
+}
+
+export function startTimer(){
+	return {
+		type: StartTimer
 	}
 }

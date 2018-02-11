@@ -2,7 +2,7 @@ import {connect} from 'react-redux'
 import DisplayChunk from '../components/DisplayChunk.js'
 import { updateChunkState, addChunk, mergeChunkUp } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
-const humanInterval = require('human-interval');
+import {parseTime} from '../utils'
 
 const TIME_BLOCK_REGEX = /^\[(.*)\]/;
 
@@ -18,7 +18,7 @@ function matchTime(text){
 	const matchArr = TIME_BLOCK_REGEX.exec(text)
 	if(matchArr){
 		const bracketText = matchArr[1]
-		const interval = humanInterval(bracketText)
+		const interval = parseTime(bracketText)
 		if(interval){
 		  return {text: bracketText, seconds: interval}
 		}
@@ -62,7 +62,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				const text = getText(state)
 				const interval = matchTime(text)
 				if(interval){
-			    dispatch(addChunk(ownProps.id, state, interval.text, interval.seconds/1000))
+			    dispatch(addChunk(ownProps.id, state, interval.text, interval.seconds))
 				  return 'handled'
 				}
 			} else if(command === 'backspace-at-start'){

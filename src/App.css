@@ -13,7 +13,7 @@ body {
 	margin-right: 0px;
 	margin-top: 0px;
 	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-	padding-right: 100px;
+	padding-right: 300px;
 	padding-top: 90px;
 	margin-top: -10px;
 	min-height: 700px;
@@ -77,4 +77,15 @@ body {
 	text-align: right;
 	left: -200px;
 	top: 23px;
+}
+
+.timer {
+	width: 300px;
+	height: 100px;
+	background-color: blue;
+	position: absolute;
+	bottom: 10px;
+	left: 40px;
+	margin: auto;
+	color: white;
 }

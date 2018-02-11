@@ -1,8 +1,10 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, SelectionState, Modifier, convertToRaw} from 'draft-js'
-import {UpdateChunk, AddChunk, MergeChunkUp} from '../actions/types'
-import humanInterval from 'human-interval'
+import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
+import {parseTime} from '../utils'
+
+let interval
 
 function editorFromText(text){
 	const content = ContentState.createFromText(text)
@@ -12,7 +14,7 @@ function editorFromText(text){
 function chunk(intervalText, text, complete){
 	return {
 		intervalContent: intervalText,
-		intervalSeconds: humanInterval(intervalText),
+		intervalSeconds: parseTime(intervalText),
 		complete: complete,
 		editorState: editorFromText(text)
 	}
@@ -27,6 +29,9 @@ function generateInitialState(){
 
 	return {
 		currentNote: current,
+		currentChunk: chunk3,
+		timerSeconds: 3,
+		timerActive: false,
 		focus: chunk1,
 		notes: {
 			[current]: {
@@ -41,7 +46,7 @@ function generateInitialState(){
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
 			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
-			[chunk3] : chunk("25 minutes", "Launch a Roadster into space", false),
+			[chunk3] : chunk("3 seconds", "Launch a Roadster into space", false),
 			[chunk4] : chunk("5 minutes", "Take another break", false)
 		}
 	}
@@ -158,6 +163,15 @@ function mergeChunkUp(state, action){
 	}
 }
 
+function toggleTimer(state, action){
+	const chunk = state.chunks[state.currentChunk]
+	if(state.timerActive){
+		return Object.assign({}, state, {timerActive: false})
+	} else {
+	  return Object.assign({}, state, {timerActive: true})
+	}
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
@@ -171,6 +185,40 @@ export default (state = initialState, action) => {
 			return addChunk(state, action)
 		case(MergeChunkUp):
 			return mergeChunkUp(state, action)
+		case(StartTimer):
+			return toggleTimer(state, action)
+		case(Tick):
+			if(state.timerActive){
+				if(state.timerSeconds > 0){
+				  return Object.assign({}, state, {timerSeconds: state.timerSeconds - 1})
+				} else {
+					// get next chunk, make a notification for it, set it to be current
+					const currentChunk = state.currentChunk
+					const chunks = state.notes[state.currentNote].chunks
+					const currentChunkIndex = state.notes[state.currentNote].chunks.indexOf(state.currentChunk)
+
+					const chunkUpdate = Object.assign({}, state.chunks[currentChunk], {complete: true})
+					const chunksUpdate = Object.assign({}, state.chunks, {[currentChunk]:chunkUpdate})
+					let newState = {
+						timerActive: false,
+						chunks: chunksUpdate
+					}
+
+					if(currentChunkIndex  + 1 < chunks.length ){
+						const nextChunk = chunks[currentChunkIndex + 1]
+						const text = state.chunks[nextChunk].editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
+						new Notification(text)
+						newState.timerValid = true
+						newState.timerSeconds = state.chunks[nextChunk].intervalSeconds
+						newState.currentChunk = nextChunk
+					} else {
+						new Notification("Wowee! You're out of stuff to do!")
+						newState.timerValid = false
+					}
+					console.log(newState)
+				  return Object.assign({}, state, newState)
+				}
+			}
 		default: {
 			return state
 		}

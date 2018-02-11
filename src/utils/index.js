@@ -1,3 +1,12 @@
+import humanInterval from 'human-interval'
+
+export function parseTime(timeText){
+	const time = humanInterval(timeText)
+	if(time){
+	  console.log(timeText, time)
+		return time/1000
+	}
+}
 export const getEntities = (editorState, entityType = null) => {
     const content = editorState.getCurrentContent();
     const entities = [];
