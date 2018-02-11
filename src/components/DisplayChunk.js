@@ -79,6 +79,7 @@ export default class DisplayChunk extends React.Component{
 					/>
 				</div>
 				<div className="separator" style={bottomStyle}/>
+				<div className="bottom-boundary" />
 			</div>
 		)
 	}
