@@ -48,6 +48,38 @@ function generateInitialState(){
 
 const initialState = generateInitialState()
 
+const blocksToString = bs => bs.map(b => b.getText() ).join("\n")
+
+function blocksFromSelection(contentState, selection){
+	const start = selection.getStartKey()
+	const end = selection.getEndKey()
+	const blocks = contentState.getBlockMap()
+
+	// all the blocks from the start of the selection till the end
+	const selectedBlocks = blocks.
+		skipUntil(b => b.getKey() === start).
+		takeUntil(b => contentState.getKeyBefore(b.getKey()) === end)
+
+	const sliceBlock = (block, start, end) => (
+		block.set('text', block.getText().slice(start, end))
+	)
+
+	// the start and the end block have unselected text removed,
+	// all other blocks are untouched:
+	const blocksWithoutUnselectedText = selectedBlocks.map(b => {
+		const key = b.getKey()
+		if(key === start){
+			return sliceBlock(b, selection.getStartOffset(), b.getLength())
+		} else if(key === end){
+			return sliceBlock(b, 0, selection.getEndOffset())
+		} else {
+			return b
+		}
+	})
+
+	return blocksWithoutUnselectedText
+}
+
 function getSelectedText(contentState, selection){
   const startKey   = selection.getStartKey();
   const endKey     = selection.getEndKey();
@@ -84,12 +116,6 @@ function getSelectedText(contentState, selection){
 	return selectedBlocks.map(getText).join("\n")
 }
 
-function clearTextBeforeCursor(editorState){
-  const selection = editorState.getSelection()
-	const removalSelection = selection.merge({anchorOffset: 0})
-	return Modifier.removeRange(editorState.getCurrentContent(), removalSelection, 'backward')
-}
-
 // builds a selection starting from the end of the block before
 // the current one till the end of the document
 function selectTillEnd(editorState){
@@ -117,11 +143,6 @@ function selectTillEnd(editorState){
 	})
 }
 
-function removeToEnd(editorState){
-	const removalSelection = selectTillEnd(editorState)
-	return Modifier.removeRange(editorState.getCurrentContent(), removalSelection, 'backward')
-}
-
 function insertAt(arr, findObj, insertObj, offset){
   const index = arr.indexOf(findObj)
   const left = arr.slice(0, index + offset)
@@ -138,6 +159,7 @@ function addChunk(state, action){
 
 	const currentContent = editorState.getCurrentContent()
 	const currentSelection = editorState.getSelection()
+
 	// 1. select till the end of the editor
 	const endSelection = selectTillEnd(editorState)
 	// 2. the old chunk should have the end selection text removed
@@ -153,8 +175,8 @@ function addChunk(state, action){
 	})
 
 	const newChunkId = uuid()
-	const newChunkText = getSelectedText(currentContent, newChunkSelection)
-	const newChunkContent = ContentState.createFromText(newChunkText)
+	const subsetBlocks = blocksFromSelection(currentContent, newChunkSelection)
+	const newChunkContent = currentContent.set('blockMap', subsetBlocks)
 	const newChunkEditor = EditorState.createWithContent(newChunkContent)
 
 	const newChunk = {
