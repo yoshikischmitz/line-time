@@ -1,11 +1,11 @@
 import React from 'react'
 import CountDown from './CountDown'
 
-export default ({seconds, onClick}) => (
+export default ({seconds, onClick, active}) => (
 	<div className="timer">
-		<button onClick={onClick}>
-			Hi
-		</button>
-		<CountDown seconds={seconds}/>
+		<div className="timer-control" onClick={onClick}>
+			<div className={ active ? "pause" : "play"}/>
+		</div>
+		<CountDown className="countdown" seconds={seconds}/>
 	</div>
 )

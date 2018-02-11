@@ -10,10 +10,7 @@ body {
 	min-height: 300px;
 	width: 400px;
 	margin: auto;
-	margin-right: 0px;
-	margin-top: 0px;
 	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-	padding-right: 300px;
 	padding-top: 90px;
 	margin-top: -10px;
 	min-height: 700px;
@@ -46,7 +43,6 @@ body {
 	width: 2.0em;
 	height: 2.0em;
 	background-image: url('./checkmark.svg');
-	border-radius: 50%;
 	position: absolute;
 	left: -13px;
 	top: 16px;
@@ -63,7 +59,7 @@ body {
 .chunk .bottom-boundary{
 	border-bottom: 1px solid #F2F2F2;
 	position: absolute;
-	width: 500px;
+	width: 300px;
 	margin-left: 4px;
 }
 
@@ -80,12 +76,66 @@ body {
 }
 
 .timer {
-	width: 300px;
-	height: 100px;
-	background-color: blue;
-	position: absolute;
+	width: 220px;
+	max-height: 60px;
+	background-color: #2D9CDB;
+	position: fixed;
 	bottom: 10px;
-	left: 40px;
-	margin: auto;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
 	color: white;
+	border-radius: 10px;
+	padding: 5px;
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
 }
+
+.timer-control {
+	float: left;
+	width: 35px;
+	height: 100%;
+	padding: 5px;
+	padding-left: 10px;
+	border-right: solid 1px #4FD4FF;
+}
+
+.timer-control .pause {
+	width: 40px;
+	height: 40px;
+	background: url('./pause.svg') no-repeat;
+}
+
+.timer-control .play {
+	width: 40px;
+	height: 40px;
+	background: url('./play.svg') no-repeat;
+}
+
+.countdown {
+	height: 100%;
+	margin-left: 9px;
+	float: left;
+	font-weight: bold;
+}
+
+.countdown-number{
+	vertical-align: middle;
+	height: 49px;
+	font-size: 25px;
+	width: 44px;
+	background-color: #333333;
+	border-radius: 5px;
+	text-align: center;
+	line-height: 49px;
+	float: left;
+}
+
+.countdown-colon{
+	float: left;
+	height: 49px;
+	color: #333333;
+	font-size: 30px;
+	line-height: 49px;
+}
+
