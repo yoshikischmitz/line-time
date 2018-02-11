@@ -10,11 +10,19 @@ body {
 	min-height: 300px;
 	width: 400px;
 	margin: auto;
-	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-	padding-top: 90px;
+	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
+	padding-top: 40px;
 	margin-top: -10px;
 	min-height: 700px;
 	height: 100%;
+}
+
+.logo {
+	width: 3em;
+	height: 3em;
+	margin: auto;
+	margin-top: 2px;
+	background-image: url('./logo.svg')
 }
 
 .chunk {
