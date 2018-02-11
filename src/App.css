@@ -43,13 +43,13 @@ body {
 }
 
 .checkmark {
-	width: 1.3em;
-	height: 1.3em;
+	width: 2.0em;
+	height: 2.0em;
 	background-image: url('./checkmark.svg');
 	border-radius: 50%;
 	position: absolute;
-	left: -8px;
-	top: 24px;
+	left: -13px;
+	top: 16px;
 }
 
 .editor {
