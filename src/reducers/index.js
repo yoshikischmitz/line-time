@@ -30,7 +30,7 @@ function generateInitialState(){
 	return {
 		currentNote: current,
 		currentChunk: chunk3,
-		timerSeconds: 3,
+		timerSeconds: 60 * 5,
 		timerActive: false,
 		focus: chunk1,
 		notes: {
@@ -46,7 +46,7 @@ function generateInitialState(){
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
 			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
-			[chunk3] : chunk("3 seconds", "Launch a Roadster into space", false),
+			[chunk3] : chunk("5 minutes", "Launch a Roadster into space", false),
 			[chunk4] : chunk("5 minutes", "Take another break", false)
 		}
 	}
