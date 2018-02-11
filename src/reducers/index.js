@@ -116,6 +116,16 @@ function removeChunk(note, index){
 	return chunks
 }
 
+function mergeChunks(upperChunk, lowerChunk){
+  const lowerChunkWithInterval = insertTextAtCursor(lowerChunk.editorState, "[" + lowerChunk.intervalContent + "]")
+	const mergedContent = appendBlocks(upperChunk.editorState.getCurrentContent(), lowerChunkWithInterval.getBlockMap())
+  const mergedChunk = EditorState.push(upperChunk.editorState, mergedContent, "merge-up")
+	const offset = lowerChunk.intervalContent.length + 2
+	const selection = lowerChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
+	const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
+	return mergedChunkWithFocus
+}
+
 function mergeChunkUp(state, action){
 	const currentNote = state.notes[state.currentNote]
 	const chunkId = action.id
@@ -127,20 +137,10 @@ function mergeChunkUp(state, action){
 		const upperChunkId = currentNote.chunks[upperChunkIndex]
 		const upperChunk = state.chunks[upperChunkId]
 
-		// 1. insert interval back into text:
-		const newContent = insertTextAtCursor(currentChunk.editorState, "[" + currentChunk.intervalContent + "]")
-
- 		// 2. add the text to the chunk above the current one:
-		const updatedChunkContent = appendBlocks(upperChunk.editorState.getCurrentContent(), newContent.getBlockMap())
-
-    const mergedChunk = EditorState.push(upperChunk.editorState, updatedChunkContent, "merge-up")
-		const offset = currentChunk.intervalContent.length + 2
-		const selection = currentChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
-		const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
-
+		const mergedChunk = mergeChunks(upperChunk, currentChunk)
 		// 3. update state:
 		const newChunk = Object.assign({}, upperChunk, {
-			editorState: mergedChunkWithFocus
+			editorState: mergedChunk
 		})
 
 		const newArr = removeChunk(currentNote, currentChunkIndex)
@@ -153,6 +153,8 @@ function mergeChunkUp(state, action){
 		const newState = Object.assign({}, state, {chunks: chunks}, {notes: notes}, {focus: upperChunkId})
 
 		return newState
+	} else {
+		return state
 	}
 }
 
