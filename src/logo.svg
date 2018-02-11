@@ -1,8 +1,8 @@
-<svg viewBox="0 0 156 156" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg viewBox="0 0 164 164" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <title>logo</title>
 <desc>Created using Figma</desc>
-<g id="Canvas" transform="translate(-2675 -996)">
-<g id="logo">
+<g id="Canvas" transform="translate(-2671 -992)">
+<g id="logo" filter="url(#filter0_d)">
 <g id="Rectangle">
 <use xlink:href="#path0_fill" transform="translate(2675.63 996.997)" fill="url(#paint0_linear)"/>
 </g>
@@ -12,11 +12,20 @@
 </g>
 </g>
 <defs>
+<filter id="filter0_d" filterUnits="userSpaceOnUse" x="2671" y="992" width="164" height="164" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="0"/>
+<feGaussianBlur stdDeviation="2"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
 <linearGradient id="paint0_linear" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-5.28039e-14 117.715 -117.715 7.20798e-15 136.077 36.7243)">
 <stop offset="0" stop-color="#2D9CDB"/>
 <stop offset="1" stop-color="#2F80ED"/>
 </linearGradient>
-<path id="path0_fill" d="M 0 7C 0 3.13401 3.13401 0 7 0L 147.44 0C 151.306 0 154.44 3.13401 154.44 7L 154.44 147.44C 154.44 151.306 151.306 154.44 147.44 154.44L 7 154.44C 3.13401 154.44 0 151.306 0 147.44L 0 7Z"/>
+<path id="path0_fill" d="M 0 8C 0 3.58172 3.58172 0 8 0L 146.44 0C 150.858 0 154.44 3.58172 154.44 8L 154.44 146.44C 154.44 150.858 150.858 154.44 146.44 154.44L 8 154.44C 3.58172 154.44 0 150.858 0 146.44L 0 8Z"/>
 <path id="path1_fill" d="M 29.5088 15.2852L 24.5166 15.2852L 24.5166 71.0781L 29.5088 71.0781L 29.5088 78.918L 14.3213 78.918L 14.3213 7.44531L 29.5088 7.44531L 29.5088 15.2852ZM 45.2588 58.5273L 67.6534 58.5273L 67.6534 67L 34.7119 67L 34.7119 15.8125L 45.2588 15.8125L 45.2588 58.5273ZM 105.024 24.3555L 89.3448 24.3555L 89.3448 67L 78.7979 67L 78.7979 24.3555L 63.3291 24.3555L 63.3291 15.8125L 105.024 15.8125L 105.024 24.3555ZM 106.958 7.44531L 122.146 7.44531L 122.146 78.918L 106.958 78.918L 106.958 71.0781L 111.985 71.0781L 111.985 15.2852L 106.958 15.2852L 106.958 7.44531Z"/>
 </defs>
 </svg>
