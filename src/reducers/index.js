@@ -2,6 +2,7 @@ import uuid from 'uuid'
 import {EditorState, ContentState, SelectionState, Modifier, convertToRaw} from 'draft-js'
 import {UpdateChunk, AddChunk, MergeChunkUp} from '../actions/types'
 import humanInterval from 'human-interval'
+import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
 
 function editorFromText(text){
 	const content = ContentState.createFromText(text)
@@ -49,49 +50,6 @@ function generateInitialState(){
 const initialState = generateInitialState()
 
 const blocksToString = bs => bs.map(b => b.getText() ).join("\n")
-
-function blocksFromSelection(contentState, selection){
-	const start = selection.getStartKey()
-	const end = selection.getEndKey()
-	const blocks = contentState.getBlockMap()
-
-	// all the blocks from the start of the selection till the end
-	const selectedBlocks = blocks.
-		skipUntil(b => b.getKey() === start).
-		takeUntil(b => contentState.getKeyBefore(b.getKey()) === end)
-
-	const sliceBlock = (block, start, end) => (
-		block.set('text', block.getText().slice(start, end))
-	)
-
-	// the start and the end block have unselected text removed,
-	// all other blocks are untouched:
-	const blocksWithoutUnselectedText = selectedBlocks.map(b => {
-		const key = b.getKey()
-		if(key === start){
-			return sliceBlock(b, selection.getStartOffset(), b.getLength())
-		} else if(key === end){
-			return sliceBlock(b, 0, selection.getEndOffset())
-		} else {
-			return b
-		}
-	})
-
-	return blocksWithoutUnselectedText
-}
-
-// builds a selection starting from the end of the block before
-// the current one till the end of the document
-function selectTillEnd(editorState){
-	const contentState = editorState.getCurrentContent()
-	const lastBlock = contentState.getLastBlock()
-
-	return editorState.getSelection().merge({
-		anchorOffset: 0, 
-		focusKey: lastBlock.getKey(), 
-		focusOffset: lastBlock.getLength()
-	})
-}
 
 function insertAt(arr, findObj, insertObj, offset){
   const index = arr.indexOf(findObj)
@@ -152,35 +110,10 @@ function addChunk(state, action){
 	return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate, focus: newChunkId})
 }
 
-function insertTextAtCursor(editorState, text){
-	const selection = editorState.getSelection()
-	const content = editorState.getCurrentContent()
-	return Modifier.insertText(content, selection, text)
-}
-
-function createEndSelection(editorState){
-	const content = editorState.getCurrentContent()
-	const lastBlock = content.getLastBlock()
-	const lastBlockSelection = SelectionState.createEmpty(lastBlock.getKey())
-  return lastBlockSelection.merge({
-		anchorOffset: lastBlock.getLength(), 
-		focusKey: lastBlock.getKey(), 
-		focusOffset: lastBlock.getLength()
-	})
-}
-
-function contentToString(content){
-  return convertToRaw(content).blocks.map((x) => x.text).join("\n")
-}
-
 function removeChunk(note, index){
 	const chunks = Object.assign([], note.chunks)
   chunks.splice(index, 1)
 	return chunks
-}
-
-function appendBlocks(content, appendedBlocks){
-  return content.set('blockMap', content.getBlockMap().merge(appendedBlocks))
 }
 
 function mergeChunkUp(state, action){
