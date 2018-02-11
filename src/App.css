@@ -21,6 +21,7 @@ body {
 }
 
 .chunk {
+	width: 500px;
 	position: relative;
 	margin-left: -3px;
 }

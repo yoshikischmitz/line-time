@@ -5,12 +5,17 @@ import {highlightBlue, darkGrey} from '../colors'
 export default class DisplayChunk extends React.Component{
 	constructor(props){
 		super(props)
+		this.onClick = this.onClick.bind(this)
 	}
 
 	componentDidUpdate(){
 		if(this.props.focused){
 		  this.editorRef.focus()
 		}
+	}
+
+	onClick(){
+		this.editorRef.focus()
 	}
 
 	render(){
@@ -63,7 +68,7 @@ export default class DisplayChunk extends React.Component{
 		}
 
 		return(
-			<div className="chunk" style={style} >
+			<div className="chunk" style={style} onClick={this.onClick}>
 				<div className="interval" style={complete ? {textDecoration: "line-through"} : {}}>
 					{ intervalContent }
 				</div>
