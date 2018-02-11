@@ -18,7 +18,7 @@ body {
 }
 
 .chunk {
-	width: 500px;
+	width: 100%;
 	position: relative;
 	margin-left: -3px;
 }
@@ -56,10 +56,14 @@ body {
 	z-index: 3;
 }
 
+.chunk .first-line {
+	font-weight: bold;
+}
+
 .chunk .bottom-boundary{
 	border-bottom: 1px solid #F2F2F2;
 	position: absolute;
-	width: 300px;
+	width: 100%;
 	margin-left: 4px;
 }
 

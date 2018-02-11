@@ -1,14 +1,22 @@
 import uuid from 'uuid'
-import {EditorState, ContentState, SelectionState, Modifier, convertToRaw} from 'draft-js'
+import {EditorState, ContentState, SelectionState, Modifier, convertToRaw, CompositeDecorator} from 'draft-js'
 import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
-import {parseTime} from '../utils'
+import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
 let interval
 
+const compositeDecorator = new CompositeDecorator([
+	{
+		strategy: firstLineStrategy,
+		component: firstLineSpan
+	}
+])
+
 function editorFromText(text){
 	const content = ContentState.createFromText(text)
-	return EditorState.createWithContent(content)
+	const editorState =  EditorState.createWithContent(content)
+	return EditorState.set(editorState, {decorator: compositeDecorator})
 }
 
 function chunk(intervalText, text, complete){
