@@ -80,64 +80,14 @@ function blocksFromSelection(contentState, selection){
 	return blocksWithoutUnselectedText
 }
 
-function getSelectedText(contentState, selection){
-  const startKey   = selection.getStartKey();
-  const endKey     = selection.getEndKey();
-  const blocks     = contentState.getBlockMap();
-
-  let lastWasEnd = false;
-	const selectedBlocks = 
-		blocks.skipUntil((block) => {
-			return block.getKey() === startKey;
-		}).takeUntil((block) => {
-	    const result = lastWasEnd;
-			if (block.getKey() === endKey) {
-			  lastWasEnd = true;
-			}
-			return result;
-		});
-
-	const getText = (block) => {
-		const key = block.getKey();
-		const text = block.getText();
-
-		let start = 0;
-		let end = text.length;
-
-		if (key === startKey) {
-				start = selection.getStartOffset();
-		}
-		if (key === endKey) {
-				end = selection.getEndOffset();
-		}
-		return text.slice(start, end);
-	}
-
-	return selectedBlocks.map(getText).join("\n")
-}
-
 // builds a selection starting from the end of the block before
 // the current one till the end of the document
 function selectTillEnd(editorState){
 	const contentState = editorState.getCurrentContent()
 	const lastBlock = contentState.getLastBlock()
-	const selection = editorState.getSelection()
-	const blockBefore = contentState.getKeyBefore(selection.getAnchorKey())
 
-	let anchorKey
-	let anchorOffset
-
-	if(blockBefore){
-		anchorKey = blockBefore
-		anchorOffset = contentState.getBlockForKey(blockBefore).getLength()
-	} else {
-		anchorKey = selection.getAnchorKey()
-		anchorOffset = 0
-	}
-
-	return selection.merge({
-		anchorKey: anchorKey,
-		anchorOffset: anchorOffset, 
+	return editorState.getSelection().merge({
+		anchorOffset: 0, 
 		focusKey: lastBlock.getKey(), 
 		focusOffset: lastBlock.getLength()
 	})
