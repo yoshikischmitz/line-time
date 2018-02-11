@@ -203,18 +203,12 @@ function contentToString(content){
 
 function removeChunk(note, index){
 	const chunks = Object.assign([], note.chunks)
-	console.log(chunks)
   chunks.splice(index, 1)
 	return chunks
 }
 
 function appendBlocks(content, appendedBlocks){
-	const blocks = content.getBlockMap()
-	let appended = blocks
-	appendedBlocks.forEach((b) => {
-	  appended = appended.set(b.getKey(), b)
-	})
-	return content.set('blockMap', appended)
+  return content.set('blockMap', content.getBlockMap().merge(appendedBlocks))
 }
 
 function mergeChunkUp(state, action){
@@ -232,16 +226,14 @@ function mergeChunkUp(state, action){
 		const newContent = insertTextAtCursor(currentChunk.editorState, "[" + currentChunk.intervalContent + "]")
 
  		// 2. add the text to the chunk above the current one:
-		const endSelection = createEndSelection(upperChunk.editorState)
-		const updatedChunkContent = appendBlocks(upperChunk.editorState.getCurrentContent(),newContent.getBlockMap())
+		const updatedChunkContent = appendBlocks(upperChunk.editorState.getCurrentContent(), newContent.getBlockMap())
 
     const mergedChunk = EditorState.push(upperChunk.editorState, updatedChunkContent, "merge-up")
 		const offset = currentChunk.intervalContent.length + 2
 		const selection = currentChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
 		const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
 
-		// 3. delete the current chunk:
-		// 4. update state:
+		// 3. update state:
 		const newChunk = Object.assign({}, upperChunk, {
 			editorState: mergedChunkWithFocus
 		})
