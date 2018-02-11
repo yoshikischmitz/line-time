@@ -4,8 +4,6 @@ import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick} from '../actions/
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
-let interval
-
 const compositeDecorator = new CompositeDecorator([
 	{
 		strategy: firstLineStrategy,
@@ -38,7 +36,7 @@ function generateInitialState(){
 	return {
 		currentNote: current,
 		currentChunk: chunk3,
-		timerSeconds: 60 * 5,
+		timerSeconds: 60 * 25,
 		timerActive: false,
 		focus: chunk1,
 		notes: {
@@ -54,7 +52,7 @@ function generateInitialState(){
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
 			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
-			[chunk3] : chunk("5 minutes", "Launch a Roadster into space", false),
+			[chunk3] : chunk("25 minutes", "Launch a Roadster into space\nmake sure it reaches Mars", false),
 			[chunk4] : chunk("5 minutes", "Take another break", false)
 		}
 	}

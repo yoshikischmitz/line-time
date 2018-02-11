@@ -13,7 +13,6 @@ export const firstLineSpan = ({children}) => <span className="first-line">{ chil
 export function parseTime(timeText){
 	const time = humanInterval(timeText)
 	if(time){
-	  console.log(timeText, time)
 		return time/1000
 	}
 }
