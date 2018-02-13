@@ -13,7 +13,7 @@ export default ({chunks}) => (
 				if(index + 1 === chunks.length){
 					last = true;
 				}
-				return <Chunk id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
+				return <Chunk key={c.id} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
 			})
 		}
 	</div>

@@ -3,6 +3,8 @@ export function appendBlocks(content, appendedBlocks){
   return content.set('blockMap', content.getBlockMap().merge(appendedBlocks))
 }
 
+export const blocksToString = bs => bs.map(b => b.getText() ).join("\n")
+
 export function insertTextAtCursor(editorState, text){
 	const selection = editorState.getSelection()
 	const content = editorState.getCurrentContent()
@@ -15,9 +17,9 @@ export function blocksFromSelection(contentState, selection){
 	const blocks = contentState.getBlockMap()
 
 	// all the blocks from the start of the selection till the end
-	const selectedBlocks = blocks.
-		skipUntil(b => b.getKey() === start).
-		takeUntil(b => contentState.getKeyBefore(b.getKey()) === end)
+	const selectedBlocks = blocks
+		.skipUntil(b => b.getKey() === start)
+		.takeUntil(b => contentState.getKeyBefore(b.getKey()) === end)
 
 	const sliceBlock = (block, start, end) => (
 		block.set('text', block.getText().slice(start, end))

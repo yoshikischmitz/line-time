@@ -19,10 +19,9 @@ export default class DisplayChunk extends React.Component{
 	}
 
 	render(){
-		const {intervalContent, intervalSeconds, editorState, onChange, 
+		const {intervalContent, editorState, onChange, 
 				keyBindingFn, handleKeyCommand, complete, prevComplete, first, last} = this.props
 
-		const color = "grey"
 		let topBorderWidth = "4px"
 		let bottomBorderWidth = "4px"
 		let topColor = darkGrey
@@ -64,7 +63,7 @@ export default class DisplayChunk extends React.Component{
 
 		let style = {}
 		if(complete){
-			style.color = "#BDBDBD",
+			style.color = "#BDBDBD"
 			style.textDecoration = "line-through"
 		}
 

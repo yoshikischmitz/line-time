@@ -1,5 +1,5 @@
 import uuid from 'uuid'
-import {EditorState, ContentState, SelectionState, Modifier, convertToRaw, CompositeDecorator} from 'draft-js'
+import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
 import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
@@ -17,6 +17,15 @@ function editorFromText(text){
 	return EditorState.set(editorState, {decorator: compositeDecorator})
 }
 
+function emptyChunk(){
+	return {
+		intervalContent: "",
+		intervalSeconds: 0,
+		complete: false,
+		editorState: EditorState.createEmpty()
+	}
+}
+
 function chunk(intervalText, text, complete){
 	return {
 		intervalContent: intervalText,
@@ -29,38 +38,27 @@ function chunk(intervalText, text, complete){
 function generateInitialState(){
 	const current = uuid()
 	const chunk1 = uuid()
-	const chunk2 = uuid()
-	const chunk3 = uuid()
-	const chunk4 = uuid()
 
 	return {
 		currentNote: current,
-		currentChunk: chunk3,
-		timerSeconds: 60 * 25,
+		currentChunk: chunk1,
+		timerSeconds: 0,
 		timerActive: false,
 		focus: chunk1,
 		notes: {
 			[current]: {
 				chunks: [
 					chunk1,
-					chunk2,
-					chunk3,
-					chunk4
 				]
 			}
 		},
 		chunks: {
-			[chunk1] : chunk("25 minutes", "Suppress revolutionaries\n", true),
-			[chunk2] : chunk("5 minutes", "Take a break\ndo some stretches\nwalk around", true),
-			[chunk3] : chunk("25 minutes", "Launch a Roadster into space\nmake sure it reaches Mars", false),
-			[chunk4] : chunk("5 minutes", "Take another break", false)
+			[chunk1] : chunk("", "", false),
 		}
 	}
 }
 
 const initialState = generateInitialState()
-
-const blocksToString = bs => bs.map(b => b.getText() ).join("\n")
 
 function insertAt(arr, findObj, insertObj, offset){
   const index = arr.indexOf(findObj)
@@ -73,52 +71,64 @@ function insertAt(arr, findObj, insertObj, offset){
 function addChunk(state, action){
 	const intervalContent = action.intervalContent
 	const intervalSeconds = action.intervalSeconds
-
+	const oldChunk = state.chunks[action.id]
 	const editorState = action.editorState
-
 	const currentContent = editorState.getCurrentContent()
 	const currentSelection = editorState.getSelection()
 
-	// 1. select till the end of the editor
-	const endSelection = selectTillEnd(editorState)
-	// 2. the old chunk should have the end selection text removed
-	const oldChunk = state.chunks[action.id]
-	const oldChunkContent = Modifier.removeRange(currentContent, endSelection, 'backward')
-	const oldChunkEditor = EditorState.push(editorState, oldChunkContent, 'new-chunk')
-	const oldChunkUpdate = Object.assign({}, oldChunk, { editorState: oldChunkEditor })
+	if(oldChunk.intervalContent.length === 0){
+		const intervalRemovalSelection = currentSelection.merge({anchorOffset: 0})
+		const oldChunkContent = Modifier.removeRange(currentContent, intervalRemovalSelection, 'backward')
+		const newEditorState = EditorState.push(editorState, oldChunkContent, 'new-chunk')
+		const oldChunkUpdate = Object.assign({}, oldChunk, {editorState: newEditorState, intervalContent: intervalContent, intervalSeconds: intervalSeconds})
+		const chunksUpdate = Object.assign({}, state.chunks, {[action.id]: oldChunkUpdate})
+		let update = {}
+		if(state.currentChunk === action.id){
+			//console.log(got here)
+			update.timerSeconds = intervalSeconds
+		}
+		return Object.assign({}, state, update, {chunks: chunksUpdate})
+	} else {
 
-	// 3. the new chunk should have the end selection as its text:
-	const newChunkSelection = endSelection.merge({
-		anchorKey: currentSelection.getAnchorKey(),
-		anchorOffset: intervalContent.length + 2
-	})
+    const endSelection = selectTillEnd(editorState)
+		// 2. the old chunk should have the end selection text removed
+		const oldChunkContent = Modifier.removeRange(currentContent, endSelection, 'backward')
+		const oldChunkEditor = EditorState.push(editorState, oldChunkContent, 'new-chunk')
+		const oldChunkUpdate = Object.assign({}, oldChunk, { editorState: oldChunkEditor })
 
-	const newChunkId = uuid()
-	const subsetBlocks = blocksFromSelection(currentContent, newChunkSelection)
-	const newChunkContent = currentContent.set('blockMap', subsetBlocks)
-	const newChunkEditor = EditorState.createWithContent(newChunkContent)
+		// 3. the new chunk should have the end selection as its text:
+		const newChunkSelection = endSelection.merge({
+			anchorKey: currentSelection.getAnchorKey(),
+			anchorOffset: intervalContent.length + 2
+		})
 
-	const newChunk = {
-		editorState: newChunkEditor,
-		intervalContent: intervalContent,
-		intervalSeconds: intervalSeconds
+		const newChunkId = uuid()
+		const subsetBlocks = blocksFromSelection(currentContent, newChunkSelection)
+		const newChunkContent = currentContent.set('blockMap', subsetBlocks)
+		const newChunkEditor = EditorState.createWithContent(newChunkContent)
+
+		const newChunk = {
+			editorState: newChunkEditor,
+			intervalContent: intervalContent,
+			intervalSeconds: intervalSeconds
+		}
+
+		const chunksUpdate = Object.assign({}, state.chunks, {
+			[newChunkId] : newChunk,
+			[action.id] : oldChunkUpdate
+		})
+
+		// update the note:
+		const currentNote = state.notes[state.currentNote]
+		const newChunks = insertAt(currentNote.chunks, action.id, newChunkId, 1)
+		const noteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
+
+		const notesUpdate = Object.assign({}, state.notes, {
+			[state.currentNote] : noteUpdate
+		})
+
+		return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate, focus: newChunkId})
 	}
-
-	const chunksUpdate = Object.assign({}, state.chunks, {
-		[newChunkId] : newChunk,
-    [action.id] : oldChunkUpdate
-	})
-
-	// update the note:
-	const currentNote = state.notes[state.currentNote]
-	const newChunks = insertAt(currentNote.chunks, action.id, newChunkId, 1)
-	const noteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
-
-	const notesUpdate = Object.assign({}, state.notes, {
-		[state.currentNote] : noteUpdate
-	})
-
-	return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate, focus: newChunkId})
 }
 
 function removeChunk(note, index){
@@ -170,7 +180,6 @@ function mergeChunkUp(state, action){
 }
 
 function toggleTimer(state, action){
-	const chunk = state.chunks[state.currentChunk]
 	if(state.timerActive){
 		return Object.assign({}, state, {timerActive: false})
 	} else {
@@ -205,6 +214,7 @@ export default (state = initialState, action) => {
 
 					const chunkUpdate = Object.assign({}, state.chunks[currentChunk], {complete: true})
 					const chunksUpdate = Object.assign({}, state.chunks, {[currentChunk]:chunkUpdate})
+
 					let newState = {
 						timerActive: false,
 						chunks: chunksUpdate
@@ -219,9 +229,17 @@ export default (state = initialState, action) => {
 						newState.currentChunk = nextChunk
 					} else {
 						new Notification("Wowee! You're out of stuff to do!")
+						// make a new chunk
+						const newChunkId = uuid()
+						newState.chunks[newChunkId] = emptyChunk()
+						// assign that chunk to the note
+						const currentNote = state.notes[state.currentNote]
+						const newChunks = currentNote.chunks.concat([newChunkId])
+						const currentNoteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
+						newState.notes = Object.assign({}, state.notes, {[state.currentNote]: currentNoteUpdate})
+						newState.currentChunk = newChunkId
 						newState.timerValid = false
 					}
-					console.log(newState)
 				  return Object.assign({}, state, newState)
 				}
 			}
@@ -229,5 +247,4 @@ export default (state = initialState, action) => {
 			return state
 		}
 	}
-	return state
 }
