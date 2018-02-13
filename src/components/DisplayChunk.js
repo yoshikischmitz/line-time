@@ -35,6 +35,7 @@ export default class DisplayChunk extends React.Component{
 			bottomColor = highlightBlue
 		}
 
+
 		if(prevComplete){
 			topBorderWidth = "6px"
 			topColor = highlightBlue
@@ -65,6 +66,12 @@ export default class DisplayChunk extends React.Component{
 		if(complete){
 			style.color = "#BDBDBD",
 			style.textDecoration = "line-through"
+		}
+
+		if(first && last){
+			topStyle = {}
+			bottomStyle = {}
+			editorStyle = {}
 		}
 
 		return(
