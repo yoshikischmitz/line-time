@@ -1,4 +1,4 @@
-import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus } from './types'
+import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, RequestNotifications, GotPermission } from './types'
 
 export function tick(){
 	return {
@@ -40,5 +40,21 @@ export function focus(chunkId){
 	return {
 		type: Focus,
 		id: chunkId
+	}
+}
+
+export function gotPermission(){
+	return {
+		type: GotPermission
+	}
+}
+
+export function requestNotifications(){
+	return (dispatch) => {
+		return Notification.requestPermission().then(result => {
+			if(result === 'granted'){
+				dispatch(gotPermission())
+			}
+		})
 	}
 }

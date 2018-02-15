@@ -1,6 +1,6 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
-import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus} from '../actions/types'
+import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
@@ -40,6 +40,7 @@ function generateInitialState(){
 	const chunk1 = uuid()
 
 	return {
+		notificationsEnabled: Notification.permission === 'granted',
 		currentNote: current,
 		currentChunk: chunk1,
 		timerSeconds: 0,
@@ -84,7 +85,6 @@ function addChunk(state, action){
 		const chunksUpdate = Object.assign({}, state.chunks, {[action.id]: oldChunkUpdate})
 		let update = {}
 		if(state.currentChunk === action.id){
-			//console.log(got here)
 			update.timerSeconds = intervalSeconds
 		}
 		return Object.assign({}, state, update, {chunks: chunksUpdate})
@@ -246,11 +246,13 @@ export default (state = initialState, action) => {
 				  return Object.assign({}, state, newState)
 				}
 			}
+		  return state
 		}
-		return state
 		case(Focus):{
-			console.log(Focus)
 			return {...state, focus: action.id}
+		}
+		case(GotPermission):{
+			return {...state, notificationsEnabled: true}
 		}
 		default: {
 			return state
