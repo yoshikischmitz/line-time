@@ -90,6 +90,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 					}
 				}
 			}
+			if(e.key === 'Tab'){
+				e.preventDefault()
+			}
 		},
 		handleKeyCommand: (command, state) => {
 			if(command === 'space-after-interval'){
