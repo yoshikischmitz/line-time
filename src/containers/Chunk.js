@@ -85,7 +85,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 						e.preventDefault()
 						dispatch(moveFocusUp())
 					}
-				} else if(anchorKey === endKey){
+				} 
+				if(anchorKey === endKey){
 					if(e.key === 'ArrowDown' && (anchorOffset === lastBlockLength || lastBlockLength === 0)){
 						e.preventDefault()
 						dispatch(moveFocusDown())
