@@ -1,17 +1,15 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import lineTimeApp from './reducers'
 import App from './components/App'
 import {tick} from  './actions'
 
-const store = createStore(
-   lineTimeApp, /* preloadedState, */
-	 applyMiddleware(thunk)
-	//window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
- );
+const middlewareWithThunk = applyMiddleware(thunk)
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(lineTimeApp, composeEnhancers(applyMiddleware(thunk)))
 
 setInterval(() => { store.dispatch(tick())}, 1000)
 

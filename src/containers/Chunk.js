@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 import DisplayChunk from '../components/DisplayChunk.js'
-import { updateChunkState, addChunk, mergeChunkUp, focus } from '../actions'
+import { updateChunkState, addChunk, mergeChunkUp, focus, moveFocusUp, moveFocusDown } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
 import {parseTime} from '../utils'
 
@@ -59,6 +59,37 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		},
 		onClick: () => {
 			dispatch(focus(ownProps.id))
+		},
+		onKeyDown: (e, editorState) => {
+			if(e.key === 'ArrowUp' || e.key === 'ArrowDown'){
+				const selection = editorState.getSelection()
+				const content = editorState.getCurrentContent()
+
+				const startKey = content.getFirstBlock().getKey()
+				const endKey = content.getLastBlock().getKey()
+
+				const anchorKey = selection.getAnchorKey()
+				const focusKey = selection.getFocusKey()
+
+				const anchorOffset = selection.getAnchorOffset()
+				const focusOffset = selection.getFocusOffset()
+
+				if(anchorKey != focusKey || anchorOffset != focusOffset){
+					return 
+				}
+
+				const lastBlockLength = content.getLastBlock().getLength()
+
+				if(anchorKey === startKey){
+					if(e.key === 'ArrowUp' && anchorOffset === 0){
+						dispatch(moveFocusUp())
+					}
+				} else if(anchorKey === endKey){
+					if(e.key === 'ArrowDown' && (anchorOffset === lastBlockLength || lastBlockLength === 0)){
+						dispatch(moveFocusDown())
+					}
+				}
+			}
 		},
 		handleKeyCommand: (command, state) => {
 			if(command === 'space-after-interval'){

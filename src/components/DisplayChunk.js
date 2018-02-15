@@ -7,6 +7,12 @@ export default class DisplayChunk extends React.Component{
 		super(props)
 	}
 
+	componentDidMount(){
+		if(this.props.focused){
+		  this.editorRef.focus()
+		}
+	}
+
 	componentDidUpdate(){
 		if(this.props.focused){
 		  this.editorRef.focus()
@@ -75,7 +81,7 @@ export default class DisplayChunk extends React.Component{
 				</div>
 				<div className={complete ? "checkmark" : "bullet"} />
 				<div className="separator" style={topStyle} />
-				<div className="editor" style={editorStyle} >
+				<div onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}className="editor" style={editorStyle} >
 					<Editor 
 						editorState={ editorState } 
 						onChange={ onChange }

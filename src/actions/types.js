@@ -6,3 +6,5 @@ export const Tick = 'TICK'
 export const Focus = 'FOCUS'
 export const RequestNotifications = "REQUEST_NOTIFICATIONS"
 export const GotPermission = "GOT_PERMISSION"
+export const MoveFocusUp = "MOVE_FOCUS_UP"
+export const MoveFocusDown = "MOVE_FOCUS_DOWN"

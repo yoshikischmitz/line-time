@@ -1,7 +1,7 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
 import {Record} from 'immutable'
-import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission} from '../actions/types'
+import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission, MoveFocusUp, MoveFocusDown} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor, blocksToString } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
@@ -139,7 +139,7 @@ function removeChunk(note, index){
 }
 
 function mergeChunks(upperChunk, lowerChunk){
-  const lowerChunkWithInterval = insertTextAtCursor(lowerChunk.editorState, "[" + lowerChunk.intervalContent + "]")
+  const lowerChunkWithInterval = insertTextAtCursor(lowerChunk.editorState, lowerChunk.intervalContent)
 	const mergedContent = appendBlocks(upperChunk.editorState.getCurrentContent(), lowerChunkWithInterval.getBlockMap())
   const mergedChunk = EditorState.push(upperChunk.editorState, mergedContent, "merge-up")
 	const offset = lowerChunk.intervalContent.length + 2
@@ -179,7 +179,7 @@ function mergeChunkUp(state, action){
 		const editorState = currentChunk.editorState
 		const content = editorState.getCurrentContent()
 		const selection = editorState.getSelection().merge({anchorKey: content.getFirstBlock().getKey(), focusKey: content.getFirstBlock().getKey(), anchorOffset: 0, focusOffset: 0})
-		const contentWithInterval = Modifier.insertText(content, selection, "[" + currentChunk.intervalContent + "]")
+		const contentWithInterval = Modifier.insertText(content, selection, currentChunk.intervalContent )
 		const newChunkState = {...currentChunk, editorState: EditorState.push(editorState, contentWithInterval, 'add-chunk-back'), intervalContent: "", intervalSeconds: 0}
 		const chunksUpdate = {...state.chunks, [chunkId]: newChunkState}
 		return {...state, chunks: chunksUpdate}
@@ -193,6 +193,26 @@ function toggleTimer(state, action){
 	} else {
 	  return Object.assign({}, state, {timerActive: true})
 	}
+}
+
+function moveFocus(state, offset){
+	const note = state.notes[state.currentNote]
+
+	if(note.chunks.length <= 1){
+		return state
+	}
+
+	const chunkIndex = note.chunks.indexOf(state.focus)
+
+  const newIndex = chunkIndex + offset
+
+	if(0 <= newIndex <= note.chunks.length){
+		const newFocus = note.chunks[newIndex]
+		if(newFocus){
+		  return {...state, focus: newFocus}
+		}
+	}
+	return state
 }
 
 export default (state = initialState, action) => {
@@ -261,6 +281,12 @@ export default (state = initialState, action) => {
 		}
 		case(GotPermission):{
 			return {...state, notificationsEnabled: true}
+		}
+		case(MoveFocusUp):{
+			return moveFocus(state, -1)
+		}
+		case(MoveFocusDown):{
+			return moveFocus(state, 1)
 		}
 		default: {
 			return state

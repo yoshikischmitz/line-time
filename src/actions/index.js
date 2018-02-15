@@ -1,4 +1,4 @@
-import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, RequestNotifications, GotPermission } from './types'
+import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, RequestNotifications, GotPermission, MoveFocusUp, MoveFocusDown } from './types'
 
 export function tick(){
 	return {
@@ -17,7 +17,7 @@ export function addChunk(chunkId, editorState, intervalContent, intervalSeconds)
 	return {
 		type: AddChunk,
 		id: chunkId,
-		intervalContent: intervalContent,
+		intervalContent: "[" + intervalContent + "]",
 		intervalSeconds: intervalSeconds,
 		editorState: editorState
 	}
@@ -57,5 +57,17 @@ export function requestNotifications(){
 				dispatch(gotPermission())
 			}
 		})
+	}
+}
+
+export function moveFocusUp(){
+	return {
+		type: MoveFocusUp
+	}
+}
+
+export function moveFocusDown(){
+	return {
+		type: MoveFocusDown
 	}
 }
