@@ -73,8 +73,6 @@ export default class DisplayChunk extends React.Component{
 			editorStyle = {}
 		}
 
-		console.log("re rendered", intervalContent)
-
 		return(
 			<div className="chunk" style={style} onClick={this.props.onClick}>
 				<div className="interval" style={complete ? {textDecoration: "line-through"} : {}}>
