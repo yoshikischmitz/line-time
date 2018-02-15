@@ -1,6 +1,6 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
-import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick} from '../actions/types'
+import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
@@ -196,13 +196,16 @@ export default (state = initialState, action) => {
 			const newChunks =  Object.assign({}, state.chunks, {[chunkId]: newChunk})
 			return Object.assign({}, state, {chunks: newChunks})
 		}
-		case(AddChunk):
+		case(AddChunk):{
 			return addChunk(state, action)
-		case(MergeChunkUp):
+		}
+		case(MergeChunkUp):{
 			return mergeChunkUp(state, action)
-		case(StartTimer):
+		}
+		case(StartTimer):{
 			return toggleTimer(state, action)
-		case(Tick):
+		}
+		case(Tick): {
 			if(state.timerActive){
 				if(state.timerSeconds > 0){
 				  return Object.assign({}, state, {timerSeconds: state.timerSeconds - 1})
@@ -243,6 +246,12 @@ export default (state = initialState, action) => {
 				  return Object.assign({}, state, newState)
 				}
 			}
+		}
+		return state
+		case(Focus):{
+			console.log(Focus)
+			return {...state, focus: action.id}
+		}
 		default: {
 			return state
 		}

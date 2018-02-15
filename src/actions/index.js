@@ -1,4 +1,4 @@
-import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick } from './types'
+import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus } from './types'
 
 export function tick(){
 	return {
@@ -33,5 +33,12 @@ export function mergeChunkUp(chunkId){
 export function startTimer(){
 	return {
 		type: StartTimer
+	}
+}
+
+export function focus(chunkId){
+	return {
+		type: Focus,
+		id: chunkId
 	}
 }

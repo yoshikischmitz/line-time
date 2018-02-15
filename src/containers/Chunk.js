@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 import DisplayChunk from '../components/DisplayChunk.js'
-import { updateChunkState, addChunk, mergeChunkUp } from '../actions'
+import { updateChunkState, addChunk, mergeChunkUp, focus } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
 import {parseTime} from '../utils'
 
@@ -56,6 +56,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				}
 			}
       return getDefaultKeyBinding(e);
+		},
+		onClick: () => {
+			dispatch(focus(ownProps.id))
 		},
 		handleKeyCommand: (command, state) => {
 			if(command === 'space-after-interval'){
