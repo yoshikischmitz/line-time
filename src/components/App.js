@@ -9,9 +9,7 @@ class App extends Component {
   render() {
     return (
 			<div>
-				<NotificationButton />
 				<div className="App">
-					<div className="logo" />
 					<CurrentNote />
 				</div>
 				<Timer />

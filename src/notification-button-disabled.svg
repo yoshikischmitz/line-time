@@ -1,0 +1,36 @@
+<svg viewBox="0 0 58 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>notification-button-disabled</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-325 320)">
+<g id="notification-button-disabled">
+<g id="Ellipse" filter="url(#filter0_d)">
+<use xlink:href="#path0_fill" transform="translate(329.573 -315.665)" fill="#FFFFFF"/>
+<mask id="mask0_outline_ins">
+<use xlink:href="#path0_fill" fill="white" transform="translate(329.573 -315.665)"/>
+</mask>
+<g mask="url(#mask0_outline_ins)">
+<use xlink:href="#path1_stroke_2x" transform="translate(329.573 -315.665)" fill="#56CCF2"/>
+</g>
+</g>
+<g id="bell">
+<g id="Vector">
+<use xlink:href="#path2_fill" transform="matrix(0.849867 0.526998 -0.526998 0.849867 349.339 -311.61)" fill="#EDBA1F"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d" filterUnits="userSpaceOnUse" x="325" y="-320" width="58" height="58" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="0"/>
+<feGaussianBlur stdDeviation="2"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<path id="path0_fill" d="M 49.1995 24.5998C 49.1995 38.1858 38.1858 49.1995 24.5998 49.1995C 11.0137 49.1995 0 38.1858 0 24.5998C 0 11.0137 11.0137 0 24.5998 0C 38.1858 0 49.1995 11.0137 49.1995 24.5998Z"/>
+<path id="path1_stroke_2x" d="M 48.1995 24.5998C 48.1995 37.6335 37.6335 48.1995 24.5998 48.1995L 24.5998 50.1995C 38.7381 50.1995 50.1995 38.7381 50.1995 24.5998L 48.1995 24.5998ZM 24.5998 48.1995C 11.566 48.1995 1 37.6335 1 24.5998L -1 24.5998C -1 38.7381 10.4614 50.1995 24.5998 50.1995L 24.5998 48.1995ZM 1 24.5998C 1 11.566 11.566 1 24.5998 1L 24.5998 -1C 10.4614 -1 -1 10.4614 -1 24.5998L 1 24.5998ZM 24.5998 1C 37.6335 1 48.1995 11.566 48.1995 24.5998L 50.1995 24.5998C 50.1995 10.4614 38.7381 -1 24.5998 -1L 24.5998 1Z"/>
+<path id="path2_fill" d="M 29.87 23.3018C 29.87 14.9131 22.4134 16.7773 22.4134 10.2528C 22.4134 9.71219 22.3613 9.25023 22.2664 8.85678C 21.7762 5.56488 19.5821 2.92298 16.7388 2.1179C 16.7641 2.00291 16.7773 1.88395 16.7773 1.76226C 16.7773 0.79296 15.9384 0 14.9131 0C 13.8879 0 13.049 0.79296 13.049 1.7622C 13.049 1.88395 13.0623 2.00291 13.0875 2.11784C 9.89889 3.02073 7.52665 6.23346 7.4585 10.0825C 7.45733 10.1384 7.45657 10.195 7.45657 10.2527C 7.45657 16.7773 0 14.9131 0 23.3018C 0 25.522 4.96882 27.3795 11.6209 27.848C 12.2478 29.0248 13.4867 29.8263 14.9131 29.8263C 16.3396 29.8263 17.5785 29.0248 18.2054 27.848C 24.8575 27.3795 29.8263 25.522 29.8263 23.3018C 29.8263 23.2952 29.8255 23.2885 29.8255 23.2819L 29.87 23.3018ZM 24.0663 24.8775C 22.4867 25.2989 20.6246 25.602 18.6262 25.7702C 18.4601 23.8647 16.8616 22.3697 14.9131 22.3697C 12.9647 22.3697 11.3662 23.8647 11.2001 25.7702C 9.2017 25.602 7.3396 25.2989 5.76003 24.8775C 3.58626 24.2974 2.547 23.6486 2.16666 23.3018C 2.547 22.955 3.58626 22.3062 5.76003 21.7261C 8.28746 21.0518 11.5381 20.6803 14.9131 20.6803C 18.2882 20.6803 21.5388 21.0518 24.0663 21.7261C 26.24 22.3062 27.2793 22.955 27.6596 23.3018C 27.2793 23.6486 26.24 24.2974 24.0663 24.8775Z"/>
+</defs>
+</svg>

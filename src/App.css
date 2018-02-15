@@ -88,7 +88,7 @@ body {
 }
 
 .timer {
-	width: 220px;
+	width: 270px;
 	max-height: 60px;
 	background-color: #2D9CDB;
 	position: fixed;
@@ -150,5 +150,17 @@ body {
 	color: #333333;
 	font-size: 30px;
 	line-height: 49px;
+}
+
+.notification-button{
+	background: url('./notification-button-disabled.svg');
+	float: left;
+	width: 49px;
+	margin-left: 6px;
+	height: 49px;
+}
+
+.notification-button.enabled{
+	background: url('./notification-button-enabled.svg');
 }
 

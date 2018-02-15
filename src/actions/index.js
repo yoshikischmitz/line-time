@@ -53,6 +53,7 @@ export function requestNotifications(){
 	return (dispatch) => {
 		return Notification.requestPermission().then(result => {
 			if(result === 'granted'){
+				new Notification("Notifications are working!")
 				dispatch(gotPermission())
 			}
 		})

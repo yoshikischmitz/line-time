@@ -1,5 +1,6 @@
 import React from 'react'
 import CountDown from './CountDown'
+import NotificationButton from './NotificationButton'
 
 export default ({seconds, onClick, active}) => (
 	<div className="timer">
@@ -7,5 +8,6 @@ export default ({seconds, onClick, active}) => (
 			<div className={ active ? "pause" : "play"}/>
 		</div>
 		<CountDown className="countdown" seconds={seconds}/>
+		<NotificationButton />
 	</div>
 )
