@@ -13,7 +13,7 @@ export default class DisplayChunk extends React.Component{
 		}
 	}
 
-	componentDidUpdate(){
+	componentDidUpdate(prevProps){
 		if(this.props.focused){
 		  this.editorRef.focus()
 		}
@@ -34,7 +34,6 @@ export default class DisplayChunk extends React.Component{
 			topColor = highlightBlue
 			bottomColor = highlightBlue
 		}
-
 
 		if(prevComplete){
 			topBorderWidth = "6px"
@@ -73,6 +72,8 @@ export default class DisplayChunk extends React.Component{
 			bottomStyle = {}
 			editorStyle = {}
 		}
+
+		console.log("re rendered", intervalContent)
 
 		return(
 			<div className="chunk" style={style} onClick={this.props.onClick}>

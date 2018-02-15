@@ -1,5 +1,5 @@
 import uuid from 'uuid'
-import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
+import {EditorState, ContentState, Modifier, CompositeDecorator, SelectionState} from 'draft-js'
 import {Record} from 'immutable'
 import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission, MoveFocusUp, MoveFocusDown} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor, blocksToString } from '../utils/draftUtils'
@@ -195,8 +195,31 @@ function toggleTimer(state, action){
 	}
 }
 
+function selectionAt(selection, key, offset){
+	const opts = {hasFocus: true, anchorKey: key, focusKey: key, anchorOffset: offset, focusOffset: offset}
+	return SelectionState.createEmpty(key).merge(opts)
+}
+
+function moveToEnd(editorState){
+	const content = editorState.getCurrentContent()
+	const lastBlock = content.getLastBlock()
+	const lastKey = lastBlock.getKey()
+	const lastBlockLength = lastBlock.getLength()
+
+	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), lastKey, lastBlockLength))
+}
+
+function moveToStart(editorState){
+	const content = editorState.getCurrentContent()
+	const firstBlock = content.getFirstBlock()
+	const firstKey = firstBlock.getKey()
+
+	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), firstKey, 0))
+}
+
 function moveFocus(state, offset){
 	const note = state.notes[state.currentNote]
+	const chunk = state.chunks[state.focus]
 
 	if(note.chunks.length <= 1){
 		return state
@@ -208,8 +231,16 @@ function moveFocus(state, offset){
 
 	if(0 <= newIndex <= note.chunks.length){
 		const newFocus = note.chunks[newIndex]
+		const newFocusChunk = state.chunks[newFocus]
 		if(newFocus){
-		  return {...state, focus: newFocus}
+			let editorUpdate
+			if(offset < 0){
+				editorUpdate = moveToEnd(newFocusChunk.editorState)
+			} else {
+				editorUpdate = moveToStart(newFocusChunk.editorState)
+			}
+			const chunkWithNewSelect = {...newFocusChunk, editorState: editorUpdate}
+      return {...state, focus: newFocus, ...state.chunks, [newFocus]: chunkWithNewSelect}
 		}
 	}
 	return state
