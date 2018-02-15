@@ -1,7 +1,8 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, CompositeDecorator} from 'draft-js'
+import {Record} from 'immutable'
 import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission} from '../actions/types'
-import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor } from '../utils/draftUtils'
+import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor, blocksToString } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
 const compositeDecorator = new CompositeDecorator([
@@ -174,9 +175,16 @@ function mergeChunkUp(state, action){
 		const newState = Object.assign({}, state, {chunks: chunks}, {notes: notes}, {focus: upperChunkId})
 
 		return newState
-	} else {
-		return state
+	} else if(currentChunk.intervalContent.length > 0) {
+		const editorState = currentChunk.editorState
+		const content = editorState.getCurrentContent()
+		const selection = editorState.getSelection().merge({anchorKey: content.getFirstBlock().getKey(), focusKey: content.getFirstBlock().getKey(), anchorOffset: 0, focusOffset: 0})
+		const contentWithInterval = Modifier.insertText(content, selection, "[" + currentChunk.intervalContent + "]")
+		const newChunkState = {...currentChunk, editorState: EditorState.push(editorState, contentWithInterval, 'add-chunk-back'), intervalContent: "", intervalSeconds: 0}
+		const chunksUpdate = {...state.chunks, [chunkId]: newChunkState}
+		return {...state, chunks: chunksUpdate}
 	}
+	return state
 }
 
 function toggleTimer(state, action){
