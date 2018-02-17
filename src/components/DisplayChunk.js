@@ -1,6 +1,7 @@
 import React from 'react'
 import { Editor } from 'draft-js'
 import {highlightBlue, darkGrey} from '../colors'
+import { Draggable } from 'react-beautiful-dnd'
 
 export default class DisplayChunk extends React.Component{
 	constructor(props){
@@ -74,24 +75,41 @@ export default class DisplayChunk extends React.Component{
 		}
 
 		return(
-			<div className="chunk" style={style} onClick={this.props.onClick}>
-				<div className="interval" style={complete ? {textDecoration: "line-through"} : {}}>
-					{ intervalContent }
-				</div>
-				<div className={complete ? "checkmark" : "bullet"} />
-				<div className="separator" style={topStyle} />
-				<div onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}className="editor" style={editorStyle} >
-					<Editor 
-						editorState={ editorState } 
-						onChange={ onChange }
-						keyBindingFn={(e) => keyBindingFn(e, editorState)}
-						handleKeyCommand={(command) => handleKeyCommand(command, editorState)}
-						ref={ref => this.editorRef = ref}
-					/>
-				</div>
-				<div className="separator" style={bottomStyle}/>
-				<div className="bottom-boundary" />
-			</div>
+			<Draggable draggableId={this.props.id} index={this.props.index}>
+				{(provided, snapshot) => (
+					<div>
+						<div 
+							ref={provided.innerRef} 
+							{...provided.draggableProps} 
+							className="chunk" 
+							style={{...style, ...provided.draggableProps.style}} 
+							onClick={this.props.onClick}
+						>
+							<div 
+								{...provided.dragHandleProps} 
+								className="interval" 
+								style={complete ? {textDecoration: "line-through"} : {}}>
+							
+								{ intervalContent }
+							</div>
+							<div className={complete ? "checkmark" : "bullet"} />
+							<div className="separator" style={topStyle} />
+							<div onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}className="editor" style={editorStyle} >
+								<Editor 
+									editorState={ editorState } 
+									onChange={ onChange }
+									keyBindingFn={(e) => keyBindingFn(e, editorState)}
+									handleKeyCommand={(command) => handleKeyCommand(command, editorState)}
+									ref={ref => this.editorRef = ref}
+								/>
+							</div>
+							<div className="separator" style={bottomStyle}/>
+							<div className="bottom-boundary" />
+						</div>
+					  {provided.placeholder}
+					</div>
+				)}
+			</Draggable>
 		)
 	}
 }

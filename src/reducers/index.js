@@ -1,7 +1,7 @@
 import uuid from 'uuid'
 import {EditorState, ContentState, Modifier, CompositeDecorator, SelectionState} from 'draft-js'
 import {Record} from 'immutable'
-import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission, MoveFocusUp, MoveFocusDown} from '../actions/types'
+import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission, MoveFocusUp, MoveFocusDown, MoveChunk} from '../actions/types'
 import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor, blocksToString } from '../utils/draftUtils'
 import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
 
@@ -247,6 +247,17 @@ function moveFocus(state, offset){
 	return state
 }
 
+function moveChunk(state, id, index){
+	const note = state.notes[state.currentNote]
+	const chunks = [...note.chunks]
+	const indexOfDragged = chunks.indexOf(id)
+	chunks.splice(indexOfDragged, 1)
+	chunks.splice(index, 0, id)
+	const noteUpdate = {...note, chunks: chunks}
+	const notesUpdate = {...state.notes, [state.currentNote]: noteUpdate}
+	return {...state, notes: notesUpdate}
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
@@ -319,6 +330,9 @@ export default (state = initialState, action) => {
 		}
 		case(MoveFocusDown):{
 			return moveFocus(state, 1)
+		}
+		case(MoveChunk):{
+			return moveChunk(state, action.id, action.index)
 		}
 		default: {
 			return state

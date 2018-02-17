@@ -8,6 +8,7 @@
     "human-interval": "^0.1.6",
     "immutable": "^3.8.2",
     "react": "^16.2.0",
+    "react-beautiful-dnd": "^4.0.1",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
     "react-scripts": "1.1.0",
