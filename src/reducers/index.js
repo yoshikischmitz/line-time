@@ -100,7 +100,7 @@ function addChunk(state, action){
 		// 3. the new chunk should have the end selection as its text:
 		const newChunkSelection = endSelection.merge({
 			anchorKey: currentSelection.getAnchorKey(),
-			anchorOffset: intervalContent.length + 2
+			anchorOffset: intervalContent.length
 		})
 
 		const newChunkId = uuid()
@@ -142,7 +142,7 @@ function mergeChunks(upperChunk, lowerChunk){
   const lowerChunkWithInterval = insertTextAtCursor(lowerChunk.editorState, lowerChunk.intervalContent)
 	const mergedContent = appendBlocks(upperChunk.editorState.getCurrentContent(), lowerChunkWithInterval.getBlockMap())
   const mergedChunk = EditorState.push(upperChunk.editorState, mergedContent, "merge-up")
-	const offset = lowerChunk.intervalContent.length + 2
+	const offset = lowerChunk.intervalContent.length
 	const selection = lowerChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
 	const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
 	return mergedChunkWithFocus
