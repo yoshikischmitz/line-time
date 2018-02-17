@@ -107,9 +107,10 @@ function addChunk(state, action){
 		const subsetBlocks = blocksFromSelection(currentContent, newChunkSelection)
 		const newChunkContent = currentContent.set('blockMap', subsetBlocks)
 		const newChunkEditor = EditorState.createWithContent(newChunkContent)
+	  const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
 
 		const newChunk = {
-			editorState: newChunkEditor,
+			editorState: editorWithDecorator,
 			intervalContent: intervalContent,
 			intervalSeconds: intervalSeconds
 		}

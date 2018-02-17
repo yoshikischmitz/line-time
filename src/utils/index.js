@@ -8,7 +8,7 @@ export const firstLineStrategy = (contentBlock, callback, contentState) => {
 	}
 }
 
-export const firstLineSpan = (props) => <span {...props} style={{fontWeight: "bold"}} className="first-line">{ props.children }</span>
+export const firstLineSpan = (props) => <span style={{fontWeight: "bold"}} className="first-line">{ props.children }</span>
 
 export function parseTime(timeText){
 	const time = humanInterval(timeText)
