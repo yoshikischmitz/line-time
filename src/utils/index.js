@@ -2,13 +2,13 @@ import React from 'react'
 import humanInterval from 'human-interval'
 
 export const firstLineStrategy = (contentBlock, callback, contentState) => {
-	if(contentBlock === contentState.getFirstBlock()){
+	if(contentBlock.getKey() === contentState.getFirstBlock().getKey()){
 		const lines = contentBlock.getText().split("\n")
 		callback(0, lines[0].length)
 	}
 }
 
-export const firstLineSpan = ({children}) => <span className="first-line">{ children }</span>
+export const firstLineSpan = (props) => <span {...props} style={{fontWeight: "bold"}} className="first-line">{ props.children }</span>
 
 export function parseTime(timeText){
 	const time = humanInterval(timeText)
