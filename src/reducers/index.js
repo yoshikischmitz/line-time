@@ -258,14 +258,18 @@ function moveChunk(state, id, index){
 	return {...state, notes: notesUpdate}
 }
 
+function updateChunk(state, id, editorState){
+	const chunk = state.chunks[id]
+	const chunkUpdate = {editorState: editorState}
+	const newChunk = Object.assign({}, state.chunks[id], chunkUpdate)
+	const newChunks =  Object.assign({}, state.chunks, {[id]: newChunk})
+	return Object.assign({}, state, {chunks: newChunks})
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
-			const chunkId = action.id
-			const chunkUpdate = {editorState: action.editorState}
-			const newChunk = Object.assign({}, state.chunks[chunkId], chunkUpdate)
-			const newChunks =  Object.assign({}, state.chunks, {[chunkId]: newChunk})
-			return Object.assign({}, state, {chunks: newChunks})
+			return updateChunk(state, action.id, action.editorState)
 		}
 		case(AddChunk):{
 			return addChunk(state, action)
