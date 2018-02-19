@@ -123,13 +123,12 @@ function addChunk(state, action){
 		// update the note:
 		const currentNote = state.notes[state.currentNote]
 		const newChunks = insertAt(currentNote.chunks, action.id, newChunkId, 1)
-		const noteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
 
-		const notesUpdate = Object.assign({}, state.notes, {
-			[state.currentNote] : noteUpdate
-		})
-
-		return Object.assign({}, state, {notes: notesUpdate, chunks: chunksUpdate, focus: newChunkId})
+		return {
+			...state, 
+			notes: updateCurrentNote(state, {chunks: newChunks}), 
+			chunks: chunksUpdate, focus: newChunkId
+		}
 	}
 }
 
