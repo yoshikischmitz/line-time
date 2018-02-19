@@ -13,14 +13,6 @@ const Separator = ({needBorder, complete}) => {
 	return <div className="separator" style={style} />
 }
 
-const TopSeparator = ({prevComplete}) => {
-	return <Separator color={borderColor(prevComplete)} width={borderWidth(prevComplete)} />
-}
-
-const BottomSeparator = ({complete}) => {
-	return <Separator color={borderColor(complete)} width={borderWidth(complete)} />
-}
-
 export default class DisplayChunk extends React.Component{
 	constructor(props){
 		super(props)

@@ -43,3 +43,13 @@ export const getEntities = (editorState, entityType = null) => {
     return entities;
 }
 
+
+export function findFirstIncompleteChunk(state){
+	const note = state.notes[state.currentNote]
+	const chunks = state.chunks
+	const found =  note.chunks.find((chunkId) => { 
+		const chunk = chunks[chunkId]
+		return chunk.complete === false
+	})
+	return found
+}

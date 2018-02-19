@@ -37,7 +37,8 @@ import {
 import {
 	parseTime, 
 	firstLineStrategy, 
-	firstLineSpan
+	firstLineSpan,
+  findFirstIncompleteChunk
 } from '../utils'
 
 const Playing = 'Playing'
@@ -82,7 +83,6 @@ function generateInitialState(){
 	return {
 		notificationsEnabled: Notification.permission === 'granted',
 		currentNote: current,
-		currentChunk: chunk1,
 		secondsRemaining: 0,
 		timerState: Stopped,
 		focus: chunk1,
@@ -156,7 +156,8 @@ function addChunk(state, action){
 				[newChunkId]: {
 					editorState: lowerEditor,
 					intervalContent: intervalContent,
-					intervalSeconds: intervalSeconds
+					intervalSeconds: intervalSeconds,
+					complete: false
 				}
 			}, 
 			focus: newChunkId
@@ -225,10 +226,6 @@ function mergeChunkUp(state, action){
 	return state
 }
 
-function getFirstValidTime(state){
-	return state.chunks[state.currentChunk].intervalSeconds
-}
-
 function toggleTimer(state, action){
 	switch(state.timerState){
 		case(Playing):{
@@ -238,7 +235,12 @@ function toggleTimer(state, action){
 		  return {...state, timerState: Playing}
 		}
 		case(Stopped):{
-		  return {...state, secondsRemaining: getFirstValidTime(state),timerState: Playing}
+			const found = findFirstIncompleteChunk(state)
+			if(found){
+		    return {...state, secondsRemaining: state.chunks[found].intervalSeconds, currentChunk: found, timerState: Playing}
+			} else {
+		    return {...state, secondsRemaining: found.intervalSeconds, timerState: Stopped}
+			}
 		}
 	}
 }
@@ -319,6 +321,7 @@ function endTimer(state) {
 	let nextChunkId
 	let nextChunk = {}
 	let noteUpdate = {}
+
 	if(currentChunkIndex + 1 < note.chunks.length ){
 		nextChunkId = note.chunks[currentChunkIndex + 1]
 		nextChunk = state.chunks[nextChunkId]
@@ -334,8 +337,8 @@ function endTimer(state) {
 
 	return {
 		...state, 
+		currentChunk: null,
 		timerState: Stopped,
-		currentChunk: nextChunkId,
 		focus: nextChunkId,
 		notes: updateCurrentNote(state, noteUpdate),
 		chunks: {
