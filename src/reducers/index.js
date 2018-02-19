@@ -325,13 +325,7 @@ function endTimer(state) {
 		currentChunk: nextChunkId,
 		focus: nextChunkId,
 		timerValid: timerValid, // get rid of this
-		notes: {
-			...state.notes,
-			[state.currentNote] : {
-				...note,
-				...noteUpdate
-			}
-		},
+		notes: updateCurrentNote(state, noteUpdate),
 		chunks: {
 			...state.chunks, 
 			[currentChunk]: {
