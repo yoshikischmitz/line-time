@@ -3,7 +3,7 @@ import {startTimer} from '../actions'
 import DisplayTimer from '../components/DisplayTimer'
 
 const mapStateToProps = (state, ownProps) => {
-	return {seconds: state.timerSeconds, active: state.timerActive}
+	return {seconds: state.secondsRemaining, state: state.timerState}
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

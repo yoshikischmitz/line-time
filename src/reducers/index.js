@@ -40,6 +40,10 @@ import {
 	firstLineSpan
 } from '../utils'
 
+const Playing = 'Playing'
+const Paused = 'Paused'
+const Stopped = 'Stopped'
+
 const compositeDecorator = new CompositeDecorator([
 	{
 		strategy: firstLineStrategy,
@@ -79,8 +83,8 @@ function generateInitialState(){
 		notificationsEnabled: Notification.permission === 'granted',
 		currentNote: current,
 		currentChunk: chunk1,
-		timerSeconds: 0,
-		timerActive: false,
+		secondsRemaining: 0,
+		timerState: Stopped,
 		focus: chunk1,
 		notes: {
 			[current]: {
@@ -117,7 +121,6 @@ function addChunk(state, action){
 
 		return {
 			...state, 
-			timerSeconds: intervalSeconds, 
 			chunks: {
 				...state.chunks,
 				[action.id] : {
@@ -222,11 +225,21 @@ function mergeChunkUp(state, action){
 	return state
 }
 
+function getFirstValidTime(state){
+	return state.chunks[state.currentChunk].intervalSeconds
+}
+
 function toggleTimer(state, action){
-	if(state.timerActive){
-		return {...state, timerActive: false}
-	} else {
-	  return {...state, timerActive: true}
+	switch(state.timerState){
+		case(Playing):{
+		  return {...state, timerState: Paused}
+		}
+		case(Paused):{
+		  return {...state, timerState: Playing}
+		}
+		case(Stopped):{
+		  return {...state, secondsRemaining: getFirstValidTime(state),timerState: Playing}
+		}
 	}
 }
 
@@ -306,13 +319,10 @@ function endTimer(state) {
 	let nextChunkId
 	let nextChunk = {}
 	let noteUpdate = {}
-	let timerValid = false
-
 	if(currentChunkIndex + 1 < note.chunks.length ){
 		nextChunkId = note.chunks[currentChunkIndex + 1]
 		nextChunk = state.chunks[nextChunkId]
 		text = nextChunk.editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
-		timerValid = true
 	} else {
 		nextChunkId = uuid()
 		nextChunk = emptyChunk()
@@ -324,11 +334,9 @@ function endTimer(state) {
 
 	return {
 		...state, 
-		timerActive: false,
-		timerSeconds: nextChunk.intervalSeconds,
+		timerState: Stopped,
 		currentChunk: nextChunkId,
 		focus: nextChunkId,
-		timerValid: timerValid, // get rid of this
 		notes: updateCurrentNote(state, noteUpdate),
 		chunks: {
 			...state.chunks, 
@@ -342,12 +350,12 @@ function endTimer(state) {
 }
 
 function tick(state){
-	if(!state.timerActive){
+	if(state.timerState != Playing){
 		return state
 	}
 
-	if(state.timerSeconds > 0){
-		return {...state, timerSeconds: state.timerSeconds - 1}
+	if(state.secondsRemaining > 0){
+		return {...state, secondsRemaining: state.secondsRemaining - 1}
 	}
 
 	return endTimer(state)

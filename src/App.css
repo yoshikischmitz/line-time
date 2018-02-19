@@ -113,16 +113,22 @@ body {
 	border-right: solid 1px #4FD4FF;
 }
 
-.timer-control .pause {
-	width: 40px;
-	height: 40px;
-	background: url('./pause.svg') no-repeat;
-}
-
-.timer-control .play {
+.timer-control .Paused {
 	width: 40px;
 	height: 40px;
 	background: url('./play.svg') no-repeat;
+}
+
+.timer-control .Stopped {
+	width: 40px;
+	height: 40px;
+	background: url('./play.svg') no-repeat;
+}
+
+.timer-control .Playing {
+	width: 40px;
+	height: 40px;
+	background: url('./pause.svg') no-repeat;
 }
 
 .countdown {
