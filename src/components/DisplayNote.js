@@ -16,7 +16,7 @@ export default ({chunks}) => (
 						if(index + 1 === chunks.length){
 							last = true;
 						}
-						return <Chunk index={index} key={c.id} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
+						return <Chunk index={index} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
 					})
 				}
 				{provided.placeholder}

@@ -44,7 +44,7 @@ export default class DisplayChunk extends React.Component{
 		}
 
 		return(
-			<Draggable draggableId={this.props.id} index={this.props.index}>
+			<Draggable draggableId={this.props.id} key={this.props.id} index={this.props.index}>
 				{(provided, snapshot) => (
 					<div>
 						<div 
