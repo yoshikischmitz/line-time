@@ -114,6 +114,7 @@ function addChunk(state, action){
 	const currentContent = editorState.getCurrentContent()
 
 	if(chunk.intervalContent.length === 0){
+
 		return {
 			...state, 
 			timerSeconds: intervalSeconds, 
@@ -128,7 +129,7 @@ function addChunk(state, action){
 			}
 		}
 	} else {
-		const {top, bottom} = splitEditor(editorState, editorState.getCurrentSelection().getAnchorKey())
+		const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
 
 		const newChunkId = uuid()
 		const newChunkContent = currentContent.set('blockMap', bottom)
@@ -182,19 +183,16 @@ function mergeChunkUp(state, action){
 	const currentChunk = state.chunks[chunkId]
 	const currentChunkIndex = currentNote.chunks.indexOf(chunkId)
 	const upperChunkIndex = currentChunkIndex - 1
-
 	const editorState = currentChunk.editorState
-	const content = editorState.getCurrentContent()
-	const selection = editorState.getSelection().merge({anchorKey: content.getFirstBlock().getKey(), focusKey: content.getFirstBlock().getKey(), anchorOffset: 0, focusOffset: 0})
-	const contentWithInterval = Modifier.insertText(content, selection, currentChunk.intervalContent )
+
+	// extract this:
+	const contentWithInterval = insertTextAtCursor(editorState, currentChunk.intervalContent)
   const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
 
 	if(upperChunkIndex >= 0){
 		const upperChunkId = currentNote.chunks[upperChunkIndex]
 		const upperChunk = state.chunks[upperChunkId]
 		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
-		// 3. update state:
-		const noteChunks = removeChunk(currentNote, currentChunkIndex)
 
 		return {
 			...state, 
@@ -203,12 +201,14 @@ function mergeChunkUp(state, action){
 				[upperChunkId] : {
 					...upperChunk,
 					editorState: mergedEditor
-				}
+				},
+				[chunkId]: null
 			}, 
 			notes: updateCurrentNote(state, {chunks: removeChunk(currentNote, currentChunkIndex)}),
 			focus: upperChunkId
 		}
 	} else if(currentChunk.intervalContent.length > 0) {
+
 		return {
 			...state, 
 			chunks: {
