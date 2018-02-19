@@ -266,6 +266,50 @@ function updateChunk(state, id, editorState){
 	return Object.assign({}, state, {chunks: newChunks})
 }
 
+function tick(state){
+	if(state.timerActive){
+		if(state.timerSeconds > 0){
+			return Object.assign({}, state, {timerSeconds: state.timerSeconds - 1})
+		} else {
+			// get next chunk, make a notification for it, set it to be current
+			const currentChunk = state.currentChunk
+			const chunks = state.notes[state.currentNote].chunks
+			const currentChunkIndex = state.notes[state.currentNote].chunks.indexOf(state.currentChunk)
+
+			const chunkUpdate = Object.assign({}, state.chunks[currentChunk], {complete: true})
+			const chunksUpdate = Object.assign({}, state.chunks, {[currentChunk]:chunkUpdate})
+
+			let newState = {
+				timerActive: false,
+				chunks: chunksUpdate
+			}
+
+			if(currentChunkIndex  + 1 < chunks.length ){
+				const nextChunk = chunks[currentChunkIndex + 1]
+				const text = state.chunks[nextChunk].editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
+				new Notification(text)
+				newState.timerValid = true
+				newState.timerSeconds = state.chunks[nextChunk].intervalSeconds
+				newState.currentChunk = nextChunk
+			} else {
+				new Notification("Wowee! You're out of stuff to do!")
+				// make a new chunk
+				const newChunkId = uuid()
+				newState.chunks[newChunkId] = emptyChunk()
+				// assign that chunk to the note
+				const currentNote = state.notes[state.currentNote]
+				const newChunks = currentNote.chunks.concat([newChunkId])
+				const currentNoteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
+				newState.notes = Object.assign({}, state.notes, {[state.currentNote]: currentNoteUpdate})
+				newState.currentChunk = newChunkId
+				newState.timerValid = false
+			}
+			return Object.assign({}, state, newState)
+		}
+	}
+	return state
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
@@ -281,47 +325,7 @@ export default (state = initialState, action) => {
 			return toggleTimer(state, action)
 		}
 		case(Tick): {
-			if(state.timerActive){
-				if(state.timerSeconds > 0){
-				  return Object.assign({}, state, {timerSeconds: state.timerSeconds - 1})
-				} else {
-					// get next chunk, make a notification for it, set it to be current
-					const currentChunk = state.currentChunk
-					const chunks = state.notes[state.currentNote].chunks
-					const currentChunkIndex = state.notes[state.currentNote].chunks.indexOf(state.currentChunk)
-
-					const chunkUpdate = Object.assign({}, state.chunks[currentChunk], {complete: true})
-					const chunksUpdate = Object.assign({}, state.chunks, {[currentChunk]:chunkUpdate})
-
-					let newState = {
-						timerActive: false,
-						chunks: chunksUpdate
-					}
-
-					if(currentChunkIndex  + 1 < chunks.length ){
-						const nextChunk = chunks[currentChunkIndex + 1]
-						const text = state.chunks[nextChunk].editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
-						new Notification(text)
-						newState.timerValid = true
-						newState.timerSeconds = state.chunks[nextChunk].intervalSeconds
-						newState.currentChunk = nextChunk
-					} else {
-						new Notification("Wowee! You're out of stuff to do!")
-						// make a new chunk
-						const newChunkId = uuid()
-						newState.chunks[newChunkId] = emptyChunk()
-						// assign that chunk to the note
-						const currentNote = state.notes[state.currentNote]
-						const newChunks = currentNote.chunks.concat([newChunkId])
-						const currentNoteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
-						newState.notes = Object.assign({}, state.notes, {[state.currentNote]: currentNoteUpdate})
-						newState.currentChunk = newChunkId
-						newState.timerValid = false
-					}
-				  return Object.assign({}, state, newState)
-				}
-			}
-		  return state
+			return tick(state)
 		}
 		case(Focus):{
 			return {...state, focus: action.id}
