@@ -288,48 +288,67 @@ function updateChunk(state, id, editorState){
 	}
 }
 
-function tick(state){
-	if(state.timerActive){
-		if(state.timerSeconds > 0){
-			return {...state, timerSeconds: state.timerSeconds - 1}
-		} else {
-			// get next chunk, make a notification for it, set it to be current
-			const currentChunk = state.currentChunk
-			const chunks = state.notes[state.currentNote].chunks
-			const currentChunkIndex = state.notes[state.currentNote].chunks.indexOf(state.currentChunk)
+function endTimer(state) {
+	// get next chunk, make a notification for it, set it to be current
+	const currentChunk = state.currentChunk
+	const currentChunkIndex = state.notes[state.currentNote].chunks.indexOf(currentChunk)
+	const note = state.notes[state.currentNote]
 
-			const chunkUpdate = Object.assign({}, state.chunks[currentChunk], {complete: true})
-			const chunksUpdate = Object.assign({}, state.chunks, {[currentChunk]:chunkUpdate})
+	let text = ""
+	let nextChunkId
+	let nextChunk = {}
+	let noteUpdate = {}
+	let timerValid = false
 
-			let newState = {
-				timerActive: false,
-				chunks: chunksUpdate
+	if(currentChunkIndex + 1 < note.chunks.length ){
+		nextChunkId = note.chunks[currentChunkIndex + 1]
+		nextChunk = state.chunks[nextChunkId]
+		text = nextChunk.editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
+		timerValid = true
+	} else {
+		nextChunkId = uuid()
+		nextChunk = emptyChunk()
+		noteUpdate = {chunks: note.chunks.concat([nextChunkId])}
+		text = "wowee you're out of stuff to do!"
+	}
+
+  new Notification(text)
+
+	return {
+		...state, 
+		timerActive: false,
+		timerSeconds: nextChunk.intervalSeconds,
+		currentChunk: nextChunkId,
+		focus: nextChunkId,
+		timerValid: timerValid, // get rid of this
+		notes: {
+			...state.notes,
+			[state.currentNote] : {
+				...note,
+				...noteUpdate
 			}
-
-			if(currentChunkIndex  + 1 < chunks.length ){
-				const nextChunk = chunks[currentChunkIndex + 1]
-				const text = state.chunks[nextChunk].editorState.getCurrentContent().getFirstBlock().getText().split("\n")[0]
-				new Notification(text)
-				newState.timerValid = true
-				newState.timerSeconds = state.chunks[nextChunk].intervalSeconds
-				newState.currentChunk = nextChunk
-			} else {
-				new Notification("Wowee! You're out of stuff to do!")
-				// make a new chunk
-				const newChunkId = uuid()
-				newState.chunks[newChunkId] = emptyChunk()
-				// assign that chunk to the note
-				const currentNote = state.notes[state.currentNote]
-				const newChunks = currentNote.chunks.concat([newChunkId])
-				const currentNoteUpdate = Object.assign({}, currentNote, {chunks: newChunks})
-				newState.notes = Object.assign({}, state.notes, {[state.currentNote]: currentNoteUpdate})
-				newState.currentChunk = newChunkId
-				newState.timerValid = false
-			}
-			return Object.assign({}, state, newState)
+		},
+		chunks: {
+			...state.chunks, 
+			[currentChunk]: {
+				...state.chunks[currentChunk],
+				complete: true
+			},
+			[nextChunkId] : nextChunk
 		}
 	}
-	return state
+}
+
+function tick(state){
+	if(!state.timerActive){
+		return state
+	}
+
+	if(state.timerSeconds > 0){
+		return {...state, timerSeconds: state.timerSeconds - 1}
+	}
+
+	return endTimer(state)
 }
 
 export default (state = initialState, action) => {
