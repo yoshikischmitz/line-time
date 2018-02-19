@@ -161,12 +161,6 @@ function addChunk(state, action){
 	}
 }
 
-function removeChunk(note, index){
-	const chunks = [...note.chunks]
-  chunks.splice(index, 1)
-	return chunks
-}
-
 function updateCurrentNote(state, update){
 	return {
 		...state.notes,
@@ -194,6 +188,9 @@ function mergeChunkUp(state, action){
 		const upperChunk = state.chunks[upperChunkId]
 		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
 
+		const chunks = [...currentNote.chunks]
+		chunks.splice(currentChunkIndex, 1)
+
 		return {
 			...state, 
 			chunks: {
@@ -204,7 +201,7 @@ function mergeChunkUp(state, action){
 				},
 				[chunkId]: null
 			}, 
-			notes: updateCurrentNote(state, {chunks: removeChunk(currentNote, currentChunkIndex)}),
+			notes: updateCurrentNote(state, {chunks: chunks}),
 			focus: upperChunkId
 		}
 	} else if(currentChunk.intervalContent.length > 0) {
