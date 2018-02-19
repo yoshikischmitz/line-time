@@ -237,10 +237,12 @@ function toggleTimer(state, action){
 		case(Stopped):{
 			const found = findFirstIncompleteChunk(state)
 			if(found){
-		    return {...state, secondsRemaining: state.chunks[found].intervalSeconds, currentChunk: found, timerState: Playing}
-			} else {
-		    return {...state, secondsRemaining: found.intervalSeconds, timerState: Stopped}
+				const seconds = state.chunks[found].intervalSeconds
+				if(seconds > 0){
+		      return {...state, secondsRemaining: state.chunks[found].intervalSeconds, currentChunk: found, timerState: Playing}
+				}
 			}
+		  return {...state, timerState: Stopped}
 		}
 	}
 }
