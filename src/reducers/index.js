@@ -249,13 +249,30 @@ function moveFocus(state, offset){
 
 function moveChunk(state, id, index){
 	const note = state.notes[state.currentNote]
-	const chunks = [...note.chunks]
-	const indexOfDragged = chunks.indexOf(id)
-	chunks.splice(indexOfDragged, 1)
-	chunks.splice(index, 0, id)
-	const noteUpdate = {...note, chunks: chunks}
-	const notesUpdate = {...state.notes, [state.currentNote]: noteUpdate}
-	return {...state, notes: notesUpdate}
+	const indexOfDragged = note.chunks.indexOf(id)
+
+	const chunks = note.chunks.reduce((memo, x, chunkIndex) => {
+		if(chunkIndex === index){
+			return memo.concat(id, x)
+		} else {
+			if(chunkIndex === indexOfDragged){
+				return memo
+			} else {
+			  return memo.concat(x)
+			}
+		}
+	}, [])
+
+	return {
+		...state, 
+		notes: {
+			...state.notes,
+			[state.currentNote]: {
+				...note,
+				chunks: chunks
+			}
+		}
+	}
 }
 
 function updateChunk(state, id, editorState){
