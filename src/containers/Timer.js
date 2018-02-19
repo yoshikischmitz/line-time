@@ -3,7 +3,8 @@ import {startTimer} from '../actions'
 import DisplayTimer from '../components/DisplayTimer'
 
 const mapStateToProps = (state, ownProps) => {
-	return {seconds: state.secondsRemaining, state: state.timerState}
+	let seconds = state.timerState === 'Playing' ? state.secondsRemaining : state.chunks[state.currentChunk].intervalSeconds || 0
+	return {seconds: seconds, state: state.timerState}
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
