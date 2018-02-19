@@ -82,20 +82,20 @@ function addChunk(state, action){
 		const intervalRemovalSelection = currentSelection.merge({anchorOffset: 0})
 		const oldChunkContent = Modifier.removeRange(currentContent, intervalRemovalSelection, 'backward')
 		const newEditorState = EditorState.push(editorState, oldChunkContent, 'new-chunk')
-		const oldChunkUpdate = Object.assign({}, oldChunk, {editorState: newEditorState, intervalContent: intervalContent, intervalSeconds: intervalSeconds})
-		const chunksUpdate = Object.assign({}, state.chunks, {[action.id]: oldChunkUpdate})
+		const oldChunkUpdate = {...oldChunk, editorState: newEditorState, intervalContent: intervalContent, intervalSeconds: intervalSeconds}
+		const chunksUpdate = {...state.chunks, [action.id]: oldChunkUpdate}
 		let update = {}
 		if(state.currentChunk === action.id){
 			update.timerSeconds = intervalSeconds
 		}
-		return Object.assign({}, state, update, {chunks: chunksUpdate})
+		return {...state, update, chunks: chunksUpdate}
 	} else {
 
     const endSelection = selectTillEnd(editorState)
 		// 2. the old chunk should have the end selection text removed
 		const oldChunkContent = Modifier.removeRange(currentContent, endSelection, 'backward')
 		const oldChunkEditor = EditorState.push(editorState, oldChunkContent, 'new-chunk')
-		const oldChunkUpdate = Object.assign({}, oldChunk, { editorState: oldChunkEditor })
+		const oldChunkUpdate = {...oldChunk, editorState: oldChunkEditor }
 
 		// 3. the new chunk should have the end selection as its text:
 		const newChunkSelection = endSelection.merge({
@@ -114,12 +114,6 @@ function addChunk(state, action){
 			intervalContent: intervalContent,
 			intervalSeconds: intervalSeconds
 		}
-
-		const chunksUpdate = Object.assign({}, state.chunks, {
-			[newChunkId] : newChunk,
-			[action.id] : oldChunkUpdate
-		})
-
 		// update the note:
 		const currentNote = state.notes[state.currentNote]
 		const newChunks = insertAt(currentNote.chunks, action.id, newChunkId, 1)
@@ -127,13 +121,18 @@ function addChunk(state, action){
 		return {
 			...state, 
 			notes: updateCurrentNote(state, {chunks: newChunks}), 
-			chunks: chunksUpdate, focus: newChunkId
+			chunks: {
+				...state.chunks,
+				[newChunkId]: newChunk,
+				[action.id] : oldChunkUpdate
+			}, 
+			focus: newChunkId
 		}
 	}
 }
 
 function removeChunk(note, index){
-	const chunks = Object.assign([], note.chunks)
+	const chunks = [...note.chunks]
   chunks.splice(index, 1)
 	return chunks
 }
