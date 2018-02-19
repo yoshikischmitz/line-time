@@ -259,17 +259,22 @@ function moveChunk(state, id, index){
 }
 
 function updateChunk(state, id, editorState){
-	const chunk = state.chunks[id]
-	const chunkUpdate = {editorState: editorState}
-	const newChunk = Object.assign({}, state.chunks[id], chunkUpdate)
-	const newChunks =  Object.assign({}, state.chunks, {[id]: newChunk})
-	return Object.assign({}, state, {chunks: newChunks})
+	return {
+		...state,
+		chunks: {
+			...state.chunks, 
+			[id]: {
+				...state.chunks[id], 
+				editorState: editorState
+			}
+		}
+	}
 }
 
 function tick(state){
 	if(state.timerActive){
 		if(state.timerSeconds > 0){
-			return Object.assign({}, state, {timerSeconds: state.timerSeconds - 1})
+			return {...state, timerSeconds: state.timerSeconds - 1}
 		} else {
 			// get next chunk, make a notification for it, set it to be current
 			const currentChunk = state.currentChunk
