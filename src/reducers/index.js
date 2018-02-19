@@ -149,6 +149,16 @@ function mergeChunks(upperChunk, lowerChunk){
 	return mergedChunkWithFocus
 }
 
+function updateCurrentNote(state, update){
+	return {
+		...state.notes,
+		[state.currentNote]: {
+			...state.notes[state.currentNote],
+			...update
+		}
+	}
+}
+
 function mergeChunkUp(state, action){
 	const currentNote = state.notes[state.currentNote]
 	const chunkId = action.id
@@ -162,20 +172,19 @@ function mergeChunkUp(state, action){
 
 		const mergedChunk = mergeChunks(upperChunk, currentChunk)
 		// 3. update state:
-		const newChunk = Object.assign({}, upperChunk, {
-			editorState: mergedChunk
-		})
+		const newChunk = {...upperChunk, editorState: mergedChunk}
 
-		const newArr = removeChunk(currentNote, currentChunkIndex)
-		const newNote = Object.assign({}, state.notes[state.currentNote], {chunks: newArr})
+		const noteChunks = removeChunk(currentNote, currentChunkIndex)
+		let chunks = {...state.chunks, [upperChunkId] : newChunk}
 
-		let chunks = Object.assign({}, state.chunks, {[upperChunkId] : newChunk})
 		delete(chunks[chunkId])
 
-		const notes = Object.assign({}, state.notes, {[state.currentNote] : newNote})
-		const newState = Object.assign({}, state, {chunks: chunks}, {notes: notes}, {focus: upperChunkId})
-
-		return newState
+		return {
+			...state, 
+			chunks: chunks, 
+			notes: updateCurrentNote(state, {chunks: noteChunks}),
+			focus: upperChunkId
+		}
 	} else if(currentChunk.intervalContent.length > 0) {
 		const editorState = currentChunk.editorState
 		const content = editorState.getCurrentContent()
@@ -190,9 +199,9 @@ function mergeChunkUp(state, action){
 
 function toggleTimer(state, action){
 	if(state.timerActive){
-		return Object.assign({}, state, {timerActive: false})
+		return {...state, timerActive: false}
 	} else {
-	  return Object.assign({}, state, {timerActive: true})
+	  return {...state, timerActive: true}
 	}
 }
 
@@ -252,26 +261,22 @@ function moveChunk(state, id, index){
 	const indexOfDragged = note.chunks.indexOf(id)
 
 	const chunks = note.chunks.reduce((memo, x, chunkIndex) => {
+		if(chunkIndex === indexOfDragged){
+			return memo
+		}
 		if(chunkIndex === index){
-			return memo.concat(id, x)
-		} else {
-			if(chunkIndex === indexOfDragged){
-				return memo
+			if(chunkIndex < indexOfDragged){
+				return memo.concat(id, x)
 			} else {
-			  return memo.concat(x)
+				return memo.concat(x, id)
 			}
 		}
+		return memo.concat(x)
 	}, [])
 
 	return {
 		...state, 
-		notes: {
-			...state.notes,
-			[state.currentNote]: {
-				...note,
-				chunks: chunks
-			}
-		}
+		notes: updateCurrentNote(state, {chunks: chunks})
 	}
 }
 
