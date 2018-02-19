@@ -1,9 +1,40 @@
 import uuid from 'uuid'
-import {EditorState, ContentState, Modifier, CompositeDecorator, SelectionState} from 'draft-js'
-import {Record} from 'immutable'
-import {UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, GotPermission, MoveFocusUp, MoveFocusDown, MoveChunk} from '../actions/types'
-import { blocksFromSelection, selectTillEnd, appendBlocks, insertTextAtCursor, blocksToString } from '../utils/draftUtils'
-import {parseTime, firstLineStrategy, firstLineSpan} from '../utils'
+import {
+	EditorState, 
+	ContentState, 
+	Modifier, 
+	CompositeDecorator, 
+	SelectionState
+} from 'draft-js'
+
+import {
+	UpdateChunk, 
+	AddChunk, 
+	MergeChunkUp, 
+	StartTimer, 
+	Tick, 
+	Focus, 
+	GotPermission, 
+	MoveFocusUp, 
+	MoveFocusDown, 
+	MoveChunk
+} from '../actions/types'
+
+import { 
+	blocksFromSelection, 
+	selectTillEnd, 
+	appendBlocks, 
+	insertTextAtCursor, 
+	blocksToString,
+	moveToEnd,
+	moveToStart
+} from '../utils/draftUtils'
+
+import {
+	parseTime, 
+	firstLineStrategy, 
+	firstLineSpan
+} from '../utils'
 
 const compositeDecorator = new CompositeDecorator([
 	{
@@ -201,28 +232,6 @@ function toggleTimer(state, action){
 	} else {
 	  return {...state, timerActive: true}
 	}
-}
-
-function selectionAt(selection, key, offset){
-	const opts = {hasFocus: true, anchorKey: key, focusKey: key, anchorOffset: offset, focusOffset: offset}
-	return SelectionState.createEmpty(key).merge(opts)
-}
-
-function moveToEnd(editorState){
-	const content = editorState.getCurrentContent()
-	const lastBlock = content.getLastBlock()
-	const lastKey = lastBlock.getKey()
-	const lastBlockLength = lastBlock.getLength()
-
-	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), lastKey, lastBlockLength))
-}
-
-function moveToStart(editorState){
-	const content = editorState.getCurrentContent()
-	const firstBlock = content.getFirstBlock()
-	const firstKey = firstBlock.getKey()
-
-	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), firstKey, 0))
 }
 
 function moveFocus(state, offset){

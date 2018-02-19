@@ -1,4 +1,8 @@
-import {Modifier} from 'draft-js'
+import {
+	EditorState, 
+	Modifier, 
+	SelectionState
+} from 'draft-js'
 export function appendBlocks(content, appendedBlocks){
   return content.set('blockMap', content.getBlockMap().merge(appendedBlocks))
 }
@@ -53,3 +57,26 @@ export function selectTillEnd(editorState){
 		focusOffset: lastBlock.getLength()
 	})
 }
+
+function selectionAt(selection, key, offset){
+	const opts = {hasFocus: true, anchorKey: key, focusKey: key, anchorOffset: offset, focusOffset: offset}
+	return SelectionState.createEmpty(key).merge(opts)
+}
+
+export function moveToEnd(editorState){
+	const content = editorState.getCurrentContent()
+	const lastBlock = content.getLastBlock()
+	const lastKey = lastBlock.getKey()
+	const lastBlockLength = lastBlock.getLength()
+
+	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), lastKey, lastBlockLength))
+}
+
+export function moveToStart(editorState){
+	const content = editorState.getCurrentContent()
+	const firstBlock = content.getFirstBlock()
+	const firstKey = firstBlock.getKey()
+
+	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), firstKey, 0))
+}
+
