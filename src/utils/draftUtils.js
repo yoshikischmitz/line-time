@@ -3,6 +3,7 @@ import {
 	Modifier, 
 	SelectionState
 } from 'draft-js'
+
 export function appendBlocks(content, appendedBlocks){
   return content.set('blockMap', content.getBlockMap().merge(appendedBlocks))
 }
@@ -80,3 +81,25 @@ export function moveToStart(editorState){
 	return EditorState.forceSelection(editorState, selectionAt(editorState.getSelection(), firstKey, 0))
 }
 
+
+export function mergeEditors(top, bottom){
+	const mergedContent = appendBlocks(top.getCurrentContent(), bottom.getCurrentContent().getBlockMap())
+  const mergedEditor = EditorState.push(top, mergedContent, "merge-up")
+	const selection = bottom.getSelection()
+	return EditorState.forceSelection(mergedEditor, selection)
+}
+
+export function splitEditor(editor, splitAnchor){
+	const content = editor.getCurrentContent()
+	const blocks = content.getBlockMap()
+	const top = blocks.takeUntil(b => b.getKey() === splitAnchor)
+	const bottom = blocks.skipUntil(b => b.getKey() === splitAnchor)
+
+	return {top: top, bottom: bottom}
+}
+
+export function removeTextBeforeCursor(editor){
+	const intervalRemovalSelection = editor.getSelection().merge({anchorOffset: 0})
+	const contentWithoutText = Modifier.removeRange(editor.getCurrentContent(), intervalRemovalSelection, 'backward')
+	return EditorState.push(editor, contentWithoutText, 'text-before-cursor-removed')
+}

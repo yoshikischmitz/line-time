@@ -1,4 +1,5 @@
 import uuid from 'uuid'
+
 import {
 	EditorState, 
 	ContentState, 
@@ -27,7 +28,10 @@ import {
 	insertTextAtCursor, 
 	blocksToString,
 	moveToEnd,
-	moveToStart
+	moveToStart,
+	mergeEditors,
+	splitEditor,
+	removeTextBeforeCursor
 } from '../utils/draftUtils'
 
 import {
@@ -101,61 +105,55 @@ function insertAt(arr, findObj, insertObj, offset){
   return newArr
 }
 
+// TODO change to acceptInterval
 function addChunk(state, action){
 	const intervalContent = action.intervalContent
 	const intervalSeconds = action.intervalSeconds
-	const oldChunk = state.chunks[action.id]
+	const chunk = state.chunks[action.id]
 	const editorState = action.editorState
 	const currentContent = editorState.getCurrentContent()
-	const currentSelection = editorState.getSelection()
 
-	if(oldChunk.intervalContent.length === 0){
-		const intervalRemovalSelection = currentSelection.merge({anchorOffset: 0})
-		const oldChunkContent = Modifier.removeRange(currentContent, intervalRemovalSelection, 'backward')
-		const newEditorState = EditorState.push(editorState, oldChunkContent, 'new-chunk')
-		const oldChunkUpdate = {...oldChunk, editorState: newEditorState, intervalContent: intervalContent, intervalSeconds: intervalSeconds}
-		const chunksUpdate = {...state.chunks, [action.id]: oldChunkUpdate}
-		let update = {}
-		if(state.currentChunk === action.id){
-			update.timerSeconds = intervalSeconds
+	if(chunk.intervalContent.length === 0){
+		return {
+			...state, 
+			timerSeconds: intervalSeconds, 
+			chunks: {
+				...state.chunks,
+				[action.id] : {
+					...chunk,
+					editorState: removeTextBeforeCursor(editorState),
+					intervalContent: intervalContent,
+					intervalSeconds: intervalSeconds
+				}
+			}
 		}
-		return {...state, update, chunks: chunksUpdate}
 	} else {
-
-    const endSelection = selectTillEnd(editorState)
-		// 2. the old chunk should have the end selection text removed
-		const oldChunkContent = Modifier.removeRange(currentContent, endSelection, 'backward')
-		const oldChunkEditor = EditorState.push(editorState, oldChunkContent, 'new-chunk')
-		const oldChunkUpdate = {...oldChunk, editorState: oldChunkEditor }
-
-		// 3. the new chunk should have the end selection as its text:
-		const newChunkSelection = endSelection.merge({
-			anchorKey: currentSelection.getAnchorKey(),
-			anchorOffset: intervalContent.length
-		})
+		const {top, bottom} = splitEditor(editorState, editorState.getCurrentSelection().getAnchorKey())
 
 		const newChunkId = uuid()
-		const subsetBlocks = blocksFromSelection(currentContent, newChunkSelection)
-		const newChunkContent = currentContent.set('blockMap', subsetBlocks)
+		const newChunkContent = currentContent.set('blockMap', bottom)
 		const newChunkEditor = EditorState.createWithContent(newChunkContent)
 	  const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
 
-		const newChunk = {
-			editorState: editorWithDecorator,
-			intervalContent: intervalContent,
-			intervalSeconds: intervalSeconds
-		}
-		// update the note:
-		const currentNote = state.notes[state.currentNote]
-		const newChunks = insertAt(currentNote.chunks, action.id, newChunkId, 1)
+		const newChunks = insertAt(state.notes[state.currentNote].chunks, action.id, newChunkId, 1)
+
+    const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
+    const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
 
 		return {
 			...state, 
 			notes: updateCurrentNote(state, {chunks: newChunks}), 
 			chunks: {
 				...state.chunks,
-				[newChunkId]: newChunk,
-				[action.id] : oldChunkUpdate
+				[action.id] : {
+					...chunk,
+					editorState: upperEditor
+				},
+				[newChunkId]: {
+					editorState: lowerEditor,
+					intervalContent: intervalContent,
+					intervalSeconds: intervalSeconds
+				}
 			}, 
 			focus: newChunkId
 		}
@@ -166,16 +164,6 @@ function removeChunk(note, index){
 	const chunks = [...note.chunks]
   chunks.splice(index, 1)
 	return chunks
-}
-
-function mergeChunks(upperChunk, lowerChunk){
-  const lowerChunkWithInterval = insertTextAtCursor(lowerChunk.editorState, lowerChunk.intervalContent)
-	const mergedContent = appendBlocks(upperChunk.editorState.getCurrentContent(), lowerChunkWithInterval.getBlockMap())
-  const mergedChunk = EditorState.push(upperChunk.editorState, mergedContent, "merge-up")
-	const offset = lowerChunk.intervalContent.length
-	const selection = lowerChunk.editorState.getSelection().merge({anchorOffset: offset, focusOffset: offset})
-	const mergedChunkWithFocus = EditorState.forceSelection(mergedChunk, selection)
-	return mergedChunkWithFocus
 }
 
 function updateCurrentNote(state, update){
@@ -195,33 +183,44 @@ function mergeChunkUp(state, action){
 	const currentChunkIndex = currentNote.chunks.indexOf(chunkId)
 	const upperChunkIndex = currentChunkIndex - 1
 
+	const editorState = currentChunk.editorState
+	const content = editorState.getCurrentContent()
+	const selection = editorState.getSelection().merge({anchorKey: content.getFirstBlock().getKey(), focusKey: content.getFirstBlock().getKey(), anchorOffset: 0, focusOffset: 0})
+	const contentWithInterval = Modifier.insertText(content, selection, currentChunk.intervalContent )
+  const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
+
 	if(upperChunkIndex >= 0){
 		const upperChunkId = currentNote.chunks[upperChunkIndex]
 		const upperChunk = state.chunks[upperChunkId]
-
-		const mergedChunk = mergeChunks(upperChunk, currentChunk)
+		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
 		// 3. update state:
-		const newChunk = {...upperChunk, editorState: mergedChunk}
-
 		const noteChunks = removeChunk(currentNote, currentChunkIndex)
-		let chunks = {...state.chunks, [upperChunkId] : newChunk}
-
-		delete(chunks[chunkId])
 
 		return {
 			...state, 
-			chunks: chunks, 
-			notes: updateCurrentNote(state, {chunks: noteChunks}),
+			chunks: {
+				...state.chunks,
+				[upperChunkId] : {
+					...upperChunk,
+					editorState: mergedEditor
+				}
+			}, 
+			notes: updateCurrentNote(state, {chunks: removeChunk(currentNote, currentChunkIndex)}),
 			focus: upperChunkId
 		}
 	} else if(currentChunk.intervalContent.length > 0) {
-		const editorState = currentChunk.editorState
-		const content = editorState.getCurrentContent()
-		const selection = editorState.getSelection().merge({anchorKey: content.getFirstBlock().getKey(), focusKey: content.getFirstBlock().getKey(), anchorOffset: 0, focusOffset: 0})
-		const contentWithInterval = Modifier.insertText(content, selection, currentChunk.intervalContent )
-		const newChunkState = {...currentChunk, editorState: EditorState.push(editorState, contentWithInterval, 'add-chunk-back'), intervalContent: "", intervalSeconds: 0}
-		const chunksUpdate = {...state.chunks, [chunkId]: newChunkState}
-		return {...state, chunks: chunksUpdate}
+		return {
+			...state, 
+			chunks: {
+				...state.chunks,
+				[chunkId]: {
+					...currentChunk,
+					editorState: editorWithInterval,
+					intervalContent: "",
+					intervalSeconds: 0
+				}
+			}
+		}
 	}
 	return state
 }
@@ -243,22 +242,22 @@ function moveFocus(state, offset){
 	}
 
 	const chunkIndex = note.chunks.indexOf(state.focus)
-
   const newIndex = chunkIndex + offset
 
 	if(0 <= newIndex <= note.chunks.length){
 		const newFocus = note.chunks[newIndex]
 		const newFocusChunk = state.chunks[newFocus]
-		if(newFocus){
-			let editorUpdate
-			if(offset < 0){
-				editorUpdate = moveToEnd(newFocusChunk.editorState)
-			} else {
-				editorUpdate = moveToStart(newFocusChunk.editorState)
-			}
-			const chunkWithNewSelect = {...newFocusChunk, editorState: editorUpdate}
-      return {...state, focus: newFocus, ...state.chunks, [newFocus]: chunkWithNewSelect}
+
+		let editorUpdate
+		if(offset < 0){
+			editorUpdate = moveToEnd(newFocusChunk.editorState)
+		} else {
+			editorUpdate = moveToStart(newFocusChunk.editorState)
 		}
+
+		const chunkWithNewSelect = {...newFocusChunk, editorState: editorUpdate}
+
+		return {...state, focus: newFocus, ...state.chunks, [newFocus]: chunkWithNewSelect}
 	}
 	return state
 }
