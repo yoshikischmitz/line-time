@@ -3,6 +3,24 @@ import { Editor } from 'draft-js'
 import {highlightBlue, darkGrey} from '../colors'
 import { Draggable } from 'react-beautiful-dnd'
 
+const borderWidth = (complete) => complete ? "6px" : "4px"
+const borderColor = (complete) => complete ? highlightBlue : darkGrey
+const border = (needsBorder, complete) => (needsBorder ? {borderLeft: `solid ${ borderColor(complete) } ${ borderWidth(complete) }`} : {})
+
+const Separator = ({needBorder, complete}) => {
+	let style = {}
+  style = border(needBorder, complete)
+	return <div className="separator" style={style} />
+}
+
+const TopSeparator = ({prevComplete}) => {
+	return <Separator color={borderColor(prevComplete)} width={borderWidth(prevComplete)} />
+}
+
+const BottomSeparator = ({complete}) => {
+	return <Separator color={borderColor(complete)} width={borderWidth(complete)} />
+}
+
 export default class DisplayChunk extends React.Component{
 	constructor(props){
 		super(props)
@@ -24,54 +42,13 @@ export default class DisplayChunk extends React.Component{
 		const {intervalContent, editorState, onChange, 
 				keyBindingFn, handleKeyCommand, complete, prevComplete, first, last} = this.props
 
-		let topBorderWidth = "4px"
-		let bottomBorderWidth = "4px"
-		let topColor = darkGrey
-		let bottomColor = darkGrey
-
-		if(complete){
-			topBorderWidth = "6px"
-			bottomBorderWidth = "6px"
-			topColor = highlightBlue
-			bottomColor = highlightBlue
-		}
-
-		if(prevComplete){
-			topBorderWidth = "6px"
-			topColor = highlightBlue
-		}
-
-		let topStyle = {
-			borderLeft: `solid ${ topColor } ${ topBorderWidth }`
-		}
-
-		let bottomStyle = {
-			borderLeft: `solid ${ bottomColor } ${ bottomBorderWidth }`
-		}
-
-		if(first){
-		  topStyle = {}
-		} else if(last){
-		  bottomStyle = {}
-		} 
-
-		let editorStyle = {
-			borderLeft: `solid ${ bottomColor } ${ bottomBorderWidth }`
-		}
-		if(last){
-			editorStyle = {}
-		}
+		let editorStyle = border(!last, complete)
 
 		let style = {}
+
 		if(complete){
 			style.color = "#BDBDBD"
 			style.textDecoration = "line-through"
-		}
-
-		if(first && last){
-			topStyle = {}
-			bottomStyle = {}
-			editorStyle = {}
 		}
 
 		return(
@@ -93,7 +70,7 @@ export default class DisplayChunk extends React.Component{
 								{ intervalContent }
 							</div>
 							<div className={complete ? "checkmark" : "bullet"} />
-							<div className="separator" style={topStyle} />
+							<Separator needBorder={!first} complete={prevComplete} />
 							<div onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}className="editor" style={editorStyle} >
 								<Editor 
 									editorState={ editorState } 
@@ -103,7 +80,7 @@ export default class DisplayChunk extends React.Component{
 									ref={ref => this.editorRef = ref}
 								/>
 							</div>
-							<div className="separator" style={bottomStyle}/>
+							<Separator needBorder={!last} complete={complete} />
 							<div className="bottom-boundary" />
 						</div>
 					  {provided.placeholder}
