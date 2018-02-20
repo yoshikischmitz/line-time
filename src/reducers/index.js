@@ -95,25 +95,28 @@ function generateInitialState(){
 		focus: chunk1,
 		notes: {
 			[current]: {
+				updatedAt: new Date(),
 				chunks: [
 					chunk1,
 				]
 			},
 			[note2]: {
+				updatedAt: new Date(),
 				chunks: [
 					chunk2
 				]
 			},
 			[note3] : {
+				updatedAt: new Date(),
 				chunks: [
 					chunk3
 				]
 			}
 		},
 		chunks: {
-			[chunk1] : chunk("25 minutes", "first note's chunk", false),
-			[chunk2] : chunk("25 minutes", "second note's chunk", false),
-			[chunk3] : chunk("25 mintues", "third note's chunk", false)
+			[chunk1] : chunk("25 minutes", "Lorem ipsum dolor sit amet, consectetuer \nadipiscing elit. Aenean commodo ligula eget dolor", false),
+			[chunk2] : chunk("25 minutes", "Aenean massa. Cum sociis \nnatoque penatibus et magnis dis parturient montes", false),
+			[chunk3] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", false)
 		}
 	}
 }
@@ -320,8 +323,22 @@ function moveChunk(state, id, index){
 }
 
 function updateChunk(state, id, editorState){
+	const noteNeedsUpdate = (state.chunks[id].editorState.getCurrentContent() !== editorState.getCurrentContent())
+
+	let noteUpdate = {}
+	if(noteNeedsUpdate){
+		noteUpdate.updatedAt = new Date()
+	}
+
 	return {
 		...state,
+		notes: {
+			...state.notes,
+			[state.currentNote]: {
+				...state.notes[state.currentNote],
+				...noteUpdate
+			}
+		},
 		chunks: {
 			...state.chunks, 
 			[id]: {
@@ -430,7 +447,8 @@ export default (state = initialState, action) => {
 				notes: {
 					...state.notes,
 					[newNote]: {
-						chunks: [newChunk]
+						chunks: [newChunk],
+						updatedAt: new Date()
 					}
 				},
 				chunks: {

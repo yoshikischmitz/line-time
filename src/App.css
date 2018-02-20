@@ -1,32 +1,88 @@
+html,
 body {
-	background-color: rgb(239, 236, 234);
-  margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  margin: 0;
+	background-color: rgb(239, 236, 234);
+  font-family: 'Roboto', sans-serif;
+	overflow-x: hidden;
 }
 
 .container {
 	display: flex;
+	height: 100vh;
 	flex-direction: row;
 	justify-content: space-between;
 }
 
 .sidebar {
-	width: 300px;
-	background-color: black;
+	width: 280px;
+	background-color: #4F4F4F;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	overflow: scroll;
+}
+
+.sidebar-notes {
+}
+
+.sidebar-note {
+	display: flex;
+	height: 110px;
+
+	flex-direction: column;
+	justify-content: center;
+
+	cursor: default;
+	border-bottom: 1px solid #828282;
+	font-size: 18px;
+}
+
+.sidebar-note-inner {
+  overflow: hidden;
+	margin-left: 30px;
+}
+
+.sidebar-note.highlight .sidebar-note-inner{
+	margin-left: 20px;
+}
+
+.sidebar-note.highlight{
+	background-color: #333333;
+	border-left: 10px solid #56CCF2;
+}
+
+.sidebar-note .title{
+	font-weight: bold;
+	width: 200px;
+}
+
+.sidebar-note .preview {
+	color: #828282;
+	width: 200px;
+}
+
+.note-container {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 800px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	height: 100vh;
+}
+
+.note-gutter {
+	flex: 1;
 }
 
 .note {
-	background-color: white;
-	min-height: 300px;
-	width: 100%;
-	max-width: 500px;
 	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
-	padding-top: 40px;
-	margin-top: -10px;
-	min-height: 700px;
+	background-color: white;
+	flex: 3;
 	height: 100%;
+	padding-bottom: 200px;
 }
 
 .logo {
@@ -70,10 +126,10 @@ body {
 
 .editor {
 	display: block;
-	font-size: 16px;
+	font-size: 12px;
 	width: 95%;
-	padding-left: 33px;
 	z-index: 3;
+  padding-left: 10px;
 }
 
 .chunk .first-line {
@@ -87,16 +143,29 @@ body {
 	margin-left: 4px;
 }
 
+
 .chunk .interval {
+	font-size: 11px;
 	font-family: monospace;
-	font-size: 18px;
 	font-weight: bold;
 	color: #9E9E9E;
 	position: absolute;
 	width: 9em;
 	text-align: right;
-	left: -200px;
+	left: -110px;
 	top: 23px;
+}
+
+@media(min-width: 630px){
+	.chunk .interval {
+		font-size: 18px;
+	  left: -200px;
+	}
+
+	.editor {
+		font-size: 16px;
+	  padding-left: 33px;
+	}
 }
 
 .timer {

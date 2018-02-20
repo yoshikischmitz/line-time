@@ -16,9 +16,12 @@ class App extends Component {
 				<DragDropContext 
 					onDragEnd={this.props.onDragEnd}
 				>
-					<div className="note">
-						<CurrentNote />
-					</div>
+					<div className="note-container">
+						<div className="note-gutter" />
+						<div className="note">
+							<CurrentNote />
+						</div>
+				  </div>
 					<Timer />
 			  </DragDropContext>
 		  </div>

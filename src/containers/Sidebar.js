@@ -18,6 +18,11 @@ const sidebar = ({notes, onNewNoteClick}) => {
 
 const mapStateToProps = (state, ownProps) => {
 	const notes = Object.keys(state.notes)
+
+	notes.sort((a, b) => {
+		return new Date(state.notes[b].updatedAt) - new Date(state.notes[a].updatedAt)
+	})
+
 	return {
 		notes: notes
 	}
