@@ -10,7 +10,7 @@ import { moveChunk } from '../actions'
 class App extends Component {
   render() {
     return (
-			<div>
+			<div class="container">
 				<DragDropContext 
 					onDragEnd={this.props.onDragEnd}
 				>
