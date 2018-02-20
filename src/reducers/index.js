@@ -318,7 +318,7 @@ function moveChunk(state, id, index){
 
 	return {
 		...state, 
-		notes: updateCurrentNote(state, {chunks: chunks})
+		notes: updateCurrentNote(state, {updatedAt: new Date(), chunks: chunks})
 	}
 }
 
