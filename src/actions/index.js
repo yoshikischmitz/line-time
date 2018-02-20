@@ -1,4 +1,18 @@
-import { UpdateChunk, AddChunk, MergeChunkUp, StartTimer, Tick, Focus, RequestNotifications, GotPermission, MoveFocusUp, MoveFocusDown, MoveChunk} from './types'
+import { 
+	UpdateChunk, 
+	AddChunk, 
+	MergeChunkUp, 
+	StartTimer, 
+	Tick, 
+	Focus, 
+	RequestNotifications, 
+	GotPermission, 
+	MoveFocusUp, 
+	MoveFocusDown, 
+	MoveChunk,
+	ChangeNote,
+	MakeNewNote
+} from './types'
 
 export function tick(){
 	return {
@@ -77,5 +91,18 @@ export function moveChunk(id, index){
 		type: MoveChunk,
 		id: id,
 		index: index
+	}
+}
+
+export function changeNote(id){
+	return {
+		type: ChangeNote,
+		id: id
+	}
+}
+
+export function makeNewNote(){
+	return {
+		type: MakeNewNote
 	}
 }

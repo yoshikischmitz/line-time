@@ -8,10 +8,16 @@ body {
 .container {
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: space-between;
 }
 
-.App {
+.sidebar {
+	width: 300px;
+	background-color: black;
+	color: white;
+}
+
+.note {
 	background-color: white;
 	min-height: 300px;
 	width: 100%;

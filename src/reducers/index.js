@@ -18,7 +18,9 @@ import {
 	GotPermission, 
 	MoveFocusUp, 
 	MoveFocusDown, 
-	MoveChunk
+	MoveChunk,
+	ChangeNote,
+	MakeNewNote
 } from '../actions/types'
 
 import { 
@@ -63,7 +65,7 @@ function emptyChunk(){
 		intervalContent: "",
 		intervalSeconds: 0,
 		complete: false,
-		editorState: EditorState.createEmpty()
+		editorState: EditorState.set(EditorState.createEmpty(), {decorator: compositeDecorator})
 	}
 }
 
@@ -78,7 +80,12 @@ function chunk(intervalText, text, complete){
 
 function generateInitialState(){
 	const current = uuid()
+	const note2 = uuid()
+	const note3 = uuid()
+
 	const chunk1 = uuid()
+	const chunk2 = uuid()
+	const chunk3 = uuid()
 
 	return {
 		notificationsEnabled: Notification.permission === 'granted',
@@ -91,10 +98,22 @@ function generateInitialState(){
 				chunks: [
 					chunk1,
 				]
+			},
+			[note2]: {
+				chunks: [
+					chunk2
+				]
+			},
+			[note3] : {
+				chunks: [
+					chunk3
+				]
 			}
 		},
 		chunks: {
-			[chunk1] : chunk("", "", false),
+			[chunk1] : chunk("25 minutes", "first note's chunk", false),
+			[chunk2] : chunk("25 minutes", "second note's chunk", false),
+			[chunk3] : chunk("25 mintues", "third note's chunk", false)
 		}
 	}
 }
@@ -397,6 +416,28 @@ export default (state = initialState, action) => {
 		}
 		case(MoveChunk):{
 			return moveChunk(state, action.id, action.index)
+		}
+		case(ChangeNote):{
+			return {...state, currentNote: action.id}
+		}
+		case(MakeNewNote):{
+			const newNote = uuid()
+			const newChunk = uuid()
+
+			return {
+				...state,
+				currentNote: newNote,
+				notes: {
+					...state.notes,
+					[newNote]: {
+						chunks: [newChunk]
+					}
+				},
+				chunks: {
+					...state.chunks,
+					[newChunk] : emptyChunk()
+				}
+			}
 		}
 		default: {
 			return state
