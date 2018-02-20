@@ -258,7 +258,7 @@ function moveFocus(state, offset){
 	const chunkIndex = note.chunks.indexOf(state.focus)
   const newIndex = chunkIndex + offset
 
-	if(0 <= newIndex <= note.chunks.length){
+	if(0 <= newIndex < note.chunks.length){
 		const newFocus = note.chunks[newIndex]
 		const newFocusChunk = state.chunks[newFocus]
 
