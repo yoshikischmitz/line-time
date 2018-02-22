@@ -1,4 +1,6 @@
 import {connect} from 'react-redux'
+import React from 'react'
+import CountDown from '../components/CountDown'
 import DisplayChunk from '../components/DisplayChunk.js'
 import { updateChunkState, addChunk, mergeChunkUp, focus, moveFocusUp, moveFocusDown } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
@@ -117,7 +119,15 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = (state, ownProps) => {
 	const chunk = state.chunks[ownProps.id]
 	const focused = state.focus === ownProps.id
-	return Object.assign({}, chunk, ownProps, {focused: focused})
+
+	const current = state.currentChunk === ownProps.id
+	let countdown
+
+	if(current){
+		countdown = <CountDown seconds={state.secondsRemaining} />
+	}
+
+	return Object.assign({}, chunk, ownProps, {focused: focused, countdown: countdown})
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)

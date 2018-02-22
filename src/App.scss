@@ -179,6 +179,7 @@ $highlight: #D6F0FF !default;
 }
 
 .interval-short {
+	text-align: center;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -189,7 +190,7 @@ $highlight: #D6F0FF !default;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 10px;
-  width: 80%;
+  width: 100%;
 	max-width: 40em;
 }
 
@@ -268,7 +269,6 @@ $highlight: #D6F0FF !default;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	//border: 1px solid red;
 	border-radius: 5px;
 	width: 100%;
 	padding-top: 9px;
@@ -276,6 +276,8 @@ $highlight: #D6F0FF !default;
 	font-family: monospace;
 	font-size: 1.5em;
 	font-weight: bold;
+	cursor: auto;
+	user-select: none;
 }
 
 .countdown-number {

@@ -425,6 +425,7 @@ template {
   display: none; }
 
 .interval-short {
+  text-align: center;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -434,7 +435,7 @@ template {
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 10px;
-  width: 80%;
+  width: 100%;
   max-width: 40em; }
 
 .editor .task-title {
@@ -505,7 +506,9 @@ template {
   padding-bottom: 9px;
   font-family: monospace;
   font-size: 1.5em;
-  font-weight: bold; }
+  font-weight: bold;
+  cursor: auto;
+  user-select: none; }
 
 .countdown-number {
   display: flex;

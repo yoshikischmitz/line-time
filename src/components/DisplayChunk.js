@@ -69,6 +69,7 @@ export default class DisplayChunk extends React.Component{
 								<div className={timelineBottomStyle(last, complete)} ></div>
 							</div>
 							<div className="editor" onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}>
+							  { this.props.countdown }
 								<Editor 
 									editorState={ editorState } 
 									onChange={ onChange }
