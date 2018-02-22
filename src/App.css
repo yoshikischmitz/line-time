@@ -301,7 +301,7 @@ template {
   .header .logo {
     height: 1em;
     margin-right: 10px; }
-  .header .plus-icon {
+  .header .control-group {
     margin-left: 10px; }
 
 .app {
@@ -366,6 +366,7 @@ template {
   padding-top: 10px;
   padding-bottom: 10px;
   color: #828282;
+  background-color: white;
   font-size: 0.7em;
   user-select: none; }
 
@@ -407,12 +408,14 @@ template {
   height: 85vh;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  background-color: #E0E0E0; }
 
 .chunk {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start; }
+  justify-content: flex-start;
+  background-color: white; }
 
 .chunk.complete {
   color: #BDBDBD; }

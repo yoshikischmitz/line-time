@@ -31,7 +31,7 @@ $highlight: #D6F0FF !default;
 		margin-right: 10px;
 	}
 
-	.plus-icon {
+	.control-group {
 		margin-left: 10px;
 	}
 }
@@ -112,6 +112,7 @@ $highlight: #D6F0FF !default;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	color: #828282;
+	background-color: white;
 	font-size: 0.7em;
 	user-select: none;
 }
@@ -161,12 +162,14 @@ $highlight: #D6F0FF !default;
   display: flex;
   flex-direction: column;
 	overflow-y: scroll;
+	background-color: $light-grey;
 }
 
 .chunk {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+	background-color: white;
 }
 
 .chunk.complete{

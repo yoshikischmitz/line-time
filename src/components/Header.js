@@ -13,7 +13,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const header = ({onNewNoteClick}) => (
 	<div className="header">
-		<Icon className="plus-icon" onClick={onNewNoteClick} image="/img/plus.svg" />
+		<div className="control-group">
+			<Icon className="plus" onClick={onNewNoteClick} image="/img/plus.svg" />
+			<Icon className="trash-can" onClick={onNewNoteClick} image="/img/trash-can.svg" />
+	  </div>
 		<img className="logo" src="/img/header-logo.svg" />
 	</div>
 )
