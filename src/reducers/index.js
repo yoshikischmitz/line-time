@@ -13,6 +13,7 @@ import {
 	AddChunk, 
 	MergeChunkUp, 
 	StartTimer, 
+	StopTimer,
 	Tick, 
 	Focus, 
 	GotPermission, 
@@ -423,6 +424,9 @@ export default (state = initialState, action) => {
 		}
 		case(StartTimer):{
 			return toggleTimer(state, action)
+		}
+		case(StopTimer):{
+		  return {...state, currentChunk: null, timerState: Stopped}
 		}
 		case(Tick): {
 			return tick(state)

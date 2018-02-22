@@ -1,5 +1,5 @@
 import {connect} from 'react-redux'
-import {startTimer} from '../actions'
+import {startTimer, stopTimer} from '../actions'
 import {findFirstIncompleteChunk} from '../utils'
 import DisplayTimer from '../components/DisplayTimer'
 
@@ -16,8 +16,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		onClick: () => {
+		onStartClick: () => {
 			dispatch(startTimer())
+		},
+		onStopClick: () => {
+			dispatch(stopTimer())
 		}
 	}
 }

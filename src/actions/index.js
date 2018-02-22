@@ -11,7 +11,8 @@ import {
 	MoveFocusDown, 
 	MoveChunk,
 	ChangeNote,
-	MakeNewNote
+	MakeNewNote,
+	StopTimer
 } from './types'
 
 export function tick(){
@@ -47,6 +48,12 @@ export function mergeChunkUp(chunkId){
 export function startTimer(){
 	return {
 		type: StartTimer
+	}
+}
+
+export function stopTimer(){
+	return {
+		type: StopTimer
 	}
 }
 
