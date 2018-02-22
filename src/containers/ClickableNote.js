@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 import {changeNote} from '../actions'
-import SidebarNote from '../components/SidebarNote'
+import NotePreview from '../components/NotePreview'
 
 const titleMax = 45
 const previewMax = 40
@@ -58,4 +58,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SidebarNote)
+export default connect(mapStateToProps, mapDispatchToProps)(NotePreview)
