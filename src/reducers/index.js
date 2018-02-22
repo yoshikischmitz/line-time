@@ -86,6 +86,8 @@ function generateInitialState(){
 	const chunk1 = uuid()
 	const chunk2 = uuid()
 	const chunk3 = uuid()
+	const chunk4 = uuid()
+	const chunk5 = uuid()
 
 	return {
 		notificationsEnabled: Notification.permission === 'granted',
@@ -98,6 +100,10 @@ function generateInitialState(){
 				updatedAt: new Date(),
 				chunks: [
 					chunk1,
+					chunk2,
+					chunk3,
+					chunk4,
+					chunk5
 				]
 			},
 			[note2]: {
@@ -115,8 +121,10 @@ function generateInitialState(){
 		},
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Lorem ipsum dolor sit amet, consectetuer \nadipiscing elit. Aenean commodo ligula eget dolor", false),
-			[chunk2] : chunk("25 minutes", "Aenean massa. Cum sociis \nnatoque penatibus et magnis dis parturient montes", false),
-			[chunk3] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", false)
+			[chunk2] : chunk("25 minutes", "Aenean massa. Cum sociis \nnatoque penatibus et magnis dis parturient montes", true),
+			[chunk3] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", true),
+			[chunk4] : chunk("25 mintues", "DDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, vDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamenenatis vitae, justo. Nullam", true),
+			[chunk5] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, iDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullammperdiet a, venenatis vitae, justo. Nullam", true)
 		}
 	}
 }

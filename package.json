@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@doist/reactist": "^1.15.0",
     "date.js": "^0.3.2",
     "draft-js": "^0.10.5",
     "human-interval": "^0.1.6",

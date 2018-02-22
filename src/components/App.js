@@ -11,18 +11,10 @@ import { moveChunk } from '../actions'
 class App extends Component {
   render() {
     return (
-			<div class="container">
+			<div class="app">
 				<Sidebar />
-				<DragDropContext 
-					onDragEnd={this.props.onDragEnd}
-				>
-					<div className="note-container">
-						<div className="note-gutter" />
-						<div className="note">
-							<CurrentNote />
-						</div>
-				  </div>
-					<Timer />
+				<DragDropContext  onDragEnd={this.props.onDragEnd}>
+					<CurrentNote />
 			  </DragDropContext>
 		  </div>
     );

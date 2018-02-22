@@ -2,12 +2,14 @@ import React from 'react'
 import CountDown from './CountDown'
 import NotificationButton from './NotificationButton'
 
+const stateMap = {
+	'Playing' : 'Pause',
+	'Paused' : 'Start',
+	'Stopped' : 'Start',
+}
+
 export default ({seconds, onClick, state}) => (
-	<div className="timer">
-		<div className="timer-control" onClick={onClick}>
-			<div className={state}/>
-		</div>
-		<CountDown className="countdown" seconds={seconds}/>
-		<NotificationButton />
+	<div className="timer-control" onClick={onClick}>
+		{ stateMap[state] }
 	</div>
 )

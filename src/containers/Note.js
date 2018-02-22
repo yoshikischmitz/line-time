@@ -16,7 +16,10 @@ const mapStateToProps = (state, ownProps) => {
 		}
 	})
 
-	return {chunks: renderChunks}
+	return {
+		chunks: renderChunks,
+		updatedAt: state.notes[ownProps.id].updatedAt
+	}
 }
 
 export default connect(mapStateToProps, null)(DisplayNote)

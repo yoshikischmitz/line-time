@@ -45,7 +45,8 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		title: clip(title, titleMax),
 		contentPreview: clip(contentPreview, previewMax),
-		highlight: needHighlight
+		highlight: needHighlight,
+		time: state.notes[ownProps.id].updatedAt
 	}
 }
 

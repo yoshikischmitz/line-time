@@ -7,10 +7,16 @@ const borderWidth = (complete) => complete ? "6px" : "4px"
 const borderColor = (complete) => complete ? highlightBlue : darkGrey
 const border = (needsBorder, complete) => (needsBorder ? {borderLeft: `solid ${ borderColor(complete) } ${ borderWidth(complete) }`} : {})
 
-const Separator = ({needBorder, complete}) => {
-	let style = {}
-  style = border(needBorder, complete)
-	return <div className="separator" style={style} />
+function timelineTopStyle(first, complete){
+	const completeStyle = complete ? "complete" : ""
+	const firstStyle = first ? "first" : ""
+	return `timeline-top ${firstStyle} ${completeStyle}` 
+}
+
+function timelineBottomStyle(last, complete){
+	const completeStyle = complete ? "complete" : ""
+	const lastStyle = last ? "last" : ""
+	return `timeline-bottom ${lastStyle} ${completeStyle}` 
 }
 
 export default class DisplayChunk extends React.Component{
@@ -34,36 +40,34 @@ export default class DisplayChunk extends React.Component{
 		const {intervalContent, editorState, onChange, 
 				keyBindingFn, handleKeyCommand, complete, prevComplete, first, last} = this.props
 
-		let editorStyle = border(!last, complete)
-
-		let style = {}
-
-		if(complete){
-			style.color = "#BDBDBD"
-			style.textDecoration = "line-through"
-		}
-
 		return(
 			<Draggable draggableId={this.props.id} key={this.props.id} index={this.props.index}>
 				{(provided, snapshot) => (
 					<div>
 						<div 
+							className={ complete ? "chunk complete" : "chunk"}
 							ref={provided.innerRef} 
 							{...provided.draggableProps} 
-							className="chunk" 
-							style={{...style, ...provided.draggableProps.style}} 
+							style={provided.draggableProps.style} 
 							onClick={this.props.onClick}
 						>
-							<div 
-								{...provided.dragHandleProps} 
-								className="interval" 
-								style={complete ? {textDecoration: "line-through"} : {}}>
-							
-								{ intervalContent }
+							<div className="interval" {...provided.dragHandleProps}>
+								<div  className="interval-long">
+									{ intervalContent }
+								</div>
+								<div  className="interval-short">
+									{ intervalContent }
+								</div>
+						  </div>
+							<div className="timeline">
+								<div className={timelineTopStyle(first, prevComplete)}></div>
+								<div className={complete ? "bullet complete" : "bullet"} >
+									<div className="inner">
+									</div>
+								</div>
+								<div className={timelineBottomStyle(last, complete)} ></div>
 							</div>
-							<div className={complete ? "checkmark" : "bullet"} />
-							<Separator needBorder={!first} complete={prevComplete} />
-							<div onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}className="editor" style={editorStyle} >
+							<div className="editor" onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}>
 								<Editor 
 									editorState={ editorState } 
 									onChange={ onChange }
@@ -72,8 +76,6 @@ export default class DisplayChunk extends React.Component{
 									ref={ref => this.editorRef = ref}
 								/>
 							</div>
-							<Separator needBorder={!last} complete={complete} />
-							<div className="bottom-boundary" />
 						</div>
 					  {provided.placeholder}
 					</div>

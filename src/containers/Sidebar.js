@@ -7,11 +7,9 @@ const sidebar = ({notes, onNewNoteClick}) => {
 	return(
 		<div className="sidebar">
 			<button onClick={onNewNoteClick}>New Note</button>
-			<div className="sidebar-notes" >
-				{ 
-					notes.map((note) => <ClickableNote key={note} id={note} />) 
-				}
-		  </div>
+			{ 
+				notes.map((note) => <ClickableNote key={note} id={note} />) 
+			}
 	  </div>
 	)
 }
