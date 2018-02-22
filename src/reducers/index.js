@@ -13,6 +13,7 @@ import {
 	AddChunk, 
 	MergeChunkUp, 
 	StartTimer, 
+	SkipTimer,
 	StopTimer,
 	Tick, 
 	Focus, 
@@ -257,6 +258,17 @@ function mergeChunkUp(state, action){
 	return state
 }
 
+function startNextTimer(state){
+	const found = findFirstIncompleteChunk(state)
+	if(found){
+		const seconds = state.chunks[found].intervalSeconds
+		if(seconds > 0){
+			return {...state, secondsRemaining: state.chunks[found].intervalSeconds, currentChunk: found, timerState: Playing}
+		}
+	}
+	return {...state, timerState: Stopped}
+}
+
 function toggleTimer(state, action){
 	switch(state.timerState){
 		case(Playing):{
@@ -266,14 +278,7 @@ function toggleTimer(state, action){
 		  return {...state, timerState: Playing}
 		}
 		case(Stopped):{
-			const found = findFirstIncompleteChunk(state)
-			if(found){
-				const seconds = state.chunks[found].intervalSeconds
-				if(seconds > 0){
-		      return {...state, secondsRemaining: state.chunks[found].intervalSeconds, currentChunk: found, timerState: Playing}
-				}
-			}
-		  return {...state, timerState: Stopped}
+			return startNextTimer(state)
 		}
 	}
 }
@@ -427,6 +432,9 @@ export default (state = initialState, action) => {
 		}
 		case(StopTimer):{
 		  return {...state, currentChunk: null, timerState: Stopped}
+		}
+		case(SkipTimer) : {
+		  return startNextTimer(endTimer(state))
 		}
 		case(Tick): {
 			return tick(state)

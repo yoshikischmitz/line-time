@@ -11,11 +11,15 @@ const dateOptions = {
 	minute: '2-digit' 
 }
 
+function className(isDropping){
+	return "note " + (isDropping ? "dropping" : "")
+}
+
 export default ({updatedAt, chunks}) => (
 	<div className = "note-timer-container">
 		<Droppable droppableId="droppable">
 			{(provided, snapshot) => (
-				<div className="note" ref={provided.innerRef}>
+				<div className={className(snapshot.isDraggingOver)} ref={provided.innerRef}>
 					<div className="note-updated">
 						{ updatedAt.toLocaleDateString("en-US", dateOptions) }
 					</div>

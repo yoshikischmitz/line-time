@@ -3,6 +3,8 @@ import {
 	AddChunk, 
 	MergeChunkUp, 
 	StartTimer, 
+	StopTimer,
+	SkipTimer,
 	Tick, 
 	Focus, 
 	RequestNotifications, 
@@ -12,7 +14,6 @@ import {
 	MoveChunk,
 	ChangeNote,
 	MakeNewNote,
-	StopTimer
 } from './types'
 
 export function tick(){
@@ -54,6 +55,12 @@ export function startTimer(){
 export function stopTimer(){
 	return {
 		type: StopTimer
+	}
+}
+
+export function skipTimer(){
+	return {
+		type: SkipTimer
 	}
 }
 
@@ -113,3 +120,4 @@ export function makeNewNote(){
 		type: MakeNewNote
 	}
 }
+

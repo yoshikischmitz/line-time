@@ -3,6 +3,7 @@ export const AddChunk = 'ADD_CHUNK'
 export const MergeChunkUp = 'MERGE_CHUNK_UP'
 export const StartTimer = 'START_TIMER'
 export const StopTimer = "STOP_TIMER"
+export const SkipTimer = "SKIP_TIMER"
 export const Tick = 'TICK'
 export const Focus = 'FOCUS'
 export const RequestNotifications = "REQUEST_NOTIFICATIONS"

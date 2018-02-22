@@ -8,7 +8,7 @@ const stateMap = {
 	'Stopped' : 'Start',
 }
 
-export default ({seconds, onStartClick, onStopClick, state}) => {
+export default ({seconds, onStopClick, onStartClick, onSkipClick, state}) => {
 	const timerActive = (state === 'Playing' || state === 'Paused')
 	return (
 		<div className="control-group">
@@ -16,7 +16,7 @@ export default ({seconds, onStartClick, onStopClick, state}) => {
 			<div className="timer-control play" onClick={onStartClick}>
 				{ stateMap[state] }
 			</div>
-			{ (timerActive) && <div className="timer-control skip">Skip</div> }
+			{ (timerActive) && <div className="timer-control skip" onClick={onSkipClick} >Skip</div> }
 		</div>
 	)
 }

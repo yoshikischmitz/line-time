@@ -1,5 +1,5 @@
 import {connect} from 'react-redux'
-import {startTimer, stopTimer} from '../actions'
+import {startTimer, stopTimer, skipTimer} from '../actions'
 import {findFirstIncompleteChunk} from '../utils'
 import DisplayTimer from '../components/DisplayTimer'
 
@@ -21,6 +21,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		},
 		onStopClick: () => {
 			dispatch(stopTimer())
+		},
+		onSkipClick: () => {
+			dispatch(skipTimer())
 		}
 	}
 }

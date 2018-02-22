@@ -378,7 +378,8 @@ template {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  z-index: 3; }
 
 .control-group {
   display: flex;
@@ -410,13 +411,17 @@ template {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  background-color: white; }
+
+.note.dropping {
   background-color: #E0E0E0; }
 
 .chunk {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  background-color: white; }
+  background-color: white;
+  z-index: 1; }
 
 .chunk.complete {
   color: #BDBDBD; }
