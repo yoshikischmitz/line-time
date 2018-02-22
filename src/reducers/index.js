@@ -97,7 +97,7 @@ function generateInitialState(){
 		focus: chunk1,
 		notes: {
 			[current]: {
-				updatedAt: new Date(),
+				updatedAt: new Date('2017-01-20'),
 				chunks: [
 					chunk1,
 					chunk2,
@@ -107,7 +107,7 @@ function generateInitialState(){
 				]
 			},
 			[note2]: {
-				updatedAt: new Date(),
+				updatedAt: new Date('2017-01-20'),
 				chunks: [
 					chunk2
 				]

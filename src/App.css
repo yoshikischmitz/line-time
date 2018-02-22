@@ -332,7 +332,7 @@ template {
     text-overflow: ellipsis; }
 
 .note-preview.current {
-  background-color: #FFE080; }
+  background-color: #D6F0FF; }
 
 .note-timer-container {
   height: 100vh;
@@ -345,7 +345,8 @@ template {
   padding-top: 10px;
   padding-bottom: 10px;
   color: #828282;
-  font-size: 0.7em; }
+  font-size: 0.7em;
+  user-select: none; }
 
 .timer-bar {
   height: 10vh;
@@ -356,18 +357,29 @@ template {
   align-items: center;
   box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.3); }
 
+.control-group {
+  display: flex;
+  flex-direction: row; }
+
 .timer-control {
-  max-height: 60px;
-  max-width: 100px;
-  max-height: 50px;
-  background: linear-gradient(118.27deg, #56CCF2 0%, #2F80ED 101.72%);
+  user-select: none;
+  cursor: default;
   text-align: center;
   font-size: 1.2em;
   color: white;
   border-radius: 2px;
-  padding: 10px 30px;
+  padding: 5px 20px;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
   margin-right: 10px; }
+
+.timer-control.stop {
+  background: linear-gradient(298.43deg, #EB5757 1.29%, #FF0000 100%, #FF0000 100%); }
+
+.timer-control.play {
+  background: linear-gradient(118.27deg, #56CCF2 0%, #2F80ED 101.72%); }
+
+.timer-control.skip {
+  background: linear-gradient(298.43deg, #219653 1.29%, #07ED68 100%, #07ED68 100%); }
 
 .note {
   width: 100%;

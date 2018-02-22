@@ -2,6 +2,7 @@ import React from 'react'
 import { Editor } from 'draft-js'
 import {highlightBlue, darkGrey} from '../colors'
 import { Draggable } from 'react-beautiful-dnd'
+import { Icon } from '@doist/reactist'
 
 const borderWidth = (complete) => complete ? "6px" : "4px"
 const borderColor = (complete) => complete ? highlightBlue : darkGrey
