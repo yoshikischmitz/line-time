@@ -295,8 +295,14 @@ template {
   height: 5vh;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: center; }
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap; }
+  .header .logo {
+    height: 1em;
+    margin-right: 10px; }
+  .header .plus-icon {
+    margin-left: 10px; }
 
 .app {
   display: flex;
@@ -530,12 +536,6 @@ template {
   box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.3);
   background-color: #2D9CDB;
   color: white; }
-
-.chunk.current .timeline-top {
-  background-color: white; }
-
-.chunk.current .timeline-bottom {
-  background-color: white; }
 
 @media (min-width: 930px) {
   .notes {

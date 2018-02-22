@@ -1,7 +1,6 @@
 import {connect} from 'react-redux'
 import React from 'react'
 import ClickableNote from './ClickableNote'
-import {makeNewNote} from '../actions'
 
 const notes = ({notes, onNewNoteClick}) => {
 	return(
@@ -25,12 +24,4 @@ const mapStateToProps = (state, ownProps) => {
 	}
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		onNewNoteClick: () => { 
-			dispatch(makeNewNote())
-		}
-	}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(notes)
+export default connect(mapStateToProps, null)(notes)

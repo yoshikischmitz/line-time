@@ -127,7 +127,7 @@ const mapStateToProps = (state, ownProps) => {
 		countdown = <CountDown seconds={state.secondsRemaining} />
 	}
 
-	return Object.assign({}, chunk, ownProps, {focused: focused, countdown: countdown})
+	return Object.assign({}, chunk, ownProps, {focused: focused, current: current, countdown: countdown})
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)

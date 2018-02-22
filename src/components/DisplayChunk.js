@@ -37,6 +37,18 @@ export default class DisplayChunk extends React.Component{
 		}
 	}
 
+	className(complete, current){
+		let classes = ["chunk"]
+		if(complete){
+			classes.push("complete")
+		}
+
+		if(current){
+			classes.push("current")
+		}
+		return classes.join(" ")
+	}
+
 	render(){
 		const {intervalContent, editorState, onChange, 
 				keyBindingFn, handleKeyCommand, complete, prevComplete, first, last} = this.props
@@ -46,7 +58,7 @@ export default class DisplayChunk extends React.Component{
 				{(provided, snapshot) => (
 					<div>
 						<div 
-							className={ complete ? "chunk complete" : "chunk"}
+							className={this.className(this.props.complete, this.props.current)}
 							ref={provided.innerRef} 
 							{...provided.draggableProps} 
 							style={provided.draggableProps.style} 

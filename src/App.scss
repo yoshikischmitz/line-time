@@ -22,9 +22,20 @@ $highlight: #D6F0FF !default;
 	height: 5vh;
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-items: center;
+	flex-wrap: nowrap;
+
+	.logo {
+		height: 1em;
+		margin-right: 10px;
+	}
+
+	.plus-icon {
+		margin-left: 10px;
+	}
 }
+
 
 .app {
 	display: flex;
@@ -302,13 +313,6 @@ $highlight: #D6F0FF !default;
 	box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.30);
 	background-color: $completed;
 	color: white;
-}
-
-.chunk.current .timeline-top{
-	background-color: white;
-}
-.chunk.current .timeline-bottom{
-	background-color: white;
 }
 
 @media(min-width: 930px) {
