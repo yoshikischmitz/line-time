@@ -5,7 +5,7 @@ import {makeNewNote} from '../actions'
 
 const sidebar = ({notes, onNewNoteClick}) => {
 	return(
-		<div className="sidebar">
+		<div className="notes">
 			<button onClick={onNewNoteClick}>New Note</button>
 			{ 
 				notes.map((note) => <ClickableNote key={note} id={note} />) 
