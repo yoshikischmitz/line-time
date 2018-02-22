@@ -3,10 +3,9 @@ import React from 'react'
 import ClickableNote from './ClickableNote'
 import {makeNewNote} from '../actions'
 
-const sidebar = ({notes, onNewNoteClick}) => {
+const notes = ({notes, onNewNoteClick}) => {
 	return(
 		<div className="notes">
-			<button onClick={onNewNoteClick}>New Note</button>
 			{ 
 				notes.map((note) => <ClickableNote key={note} id={note} />) 
 			}
@@ -34,4 +33,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(sidebar)
+export default connect(mapStateToProps, mapDispatchToProps)(notes)

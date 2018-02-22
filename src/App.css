@@ -283,19 +283,34 @@ template {
   display: none !important; }
 
 /*# sourceMappingURL=bootstrap-reboot.css.map */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100vh; }
+
+.header {
+  background-color: #333333;
+  width: 100%;
+  height: 5vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center; }
+
 .app {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   flex-wrap: wrap;
-  height: 100vh; }
+  height: 95vh; }
 
 .notes {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
   display: none;
-  height: 100vh;
+  height: 100%;
   border-right: 1px solid #E0E0E0;
   background-color: white;
   z-index: 3; }
@@ -335,7 +350,7 @@ template {
   background-color: #D6F0FF; }
 
 .note-timer-container {
-  height: 100vh;
+  height: 85vh;
   width: 100%;
   z-index: 1; }
 
@@ -383,7 +398,7 @@ template {
 
 .note {
   width: 100%;
-  height: 90vh;
+  height: 85vh;
   display: flex;
   flex-direction: column;
   overflow-y: scroll; }
@@ -524,7 +539,8 @@ template {
     display: block;
     width: 25%; }
   .note-timer-container {
-    width: 75%; }
+    width: 75%;
+    height: 100%; }
   .chunk {
     width: 100%; }
   .interval {
