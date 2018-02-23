@@ -103,3 +103,9 @@ export function removeTextBeforeCursor(editor){
 	const contentWithoutText = Modifier.removeRange(editor.getCurrentContent(), intervalRemovalSelection, 'backward')
 	return EditorState.push(editor, contentWithoutText, 'text-before-cursor-removed')
 }
+
+export const selectionCollapsed = (state) => {
+	const selection = state.getSelection()
+	const collapsed = (selection.getAnchorKey() === selection.getFocusKey()) && (selection.getAnchorOffset() === selection.getFocusOffset())
+	return collapsed
+}

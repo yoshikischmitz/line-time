@@ -3,8 +3,18 @@ import React from 'react'
 import CountDown from '../components/CountDown'
 import Timer from '../containers/Timer'
 import DisplayChunk from '../components/DisplayChunk.js'
-import { updateChunkState, addChunk, mergeChunkUp, focus, moveFocusUp, moveFocusDown } from '../actions'
+import { 
+	updateChunkState, 
+	addChunk, 
+	mergeChunkUp, 
+	focus, 
+	moveFocusUp, 
+	moveFocusDown 
+} from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
+import {
+	selectionCollapsed
+} from '../utils/draftUtils'
 import {parseTime, findFirstIncompleteChunk} from '../utils'
 
 const TIME_BLOCK_REGEX = /^\[(.*)\]/;
@@ -54,7 +64,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 					return 'space-after-interval'
 				}
 			} else if(e.keyCode === 8){
-				if(atStart(state)){
+				if(atStart(state) && selectionCollapsed(state)){
 					return 'backspace-at-start'
 				}
 			}
