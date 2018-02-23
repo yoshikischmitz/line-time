@@ -152,21 +152,21 @@ $highlight: #D6F0FF !default;
 	cursor: default;
 	text-align: center;
 	vertical-align: middle;
-	font-size: 12px;
+	font-size: 16px;
 	color: white;
 	border-radius: 2px;
-	padding: 5px 10px;
+	padding: 5px 15px;
 	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
 	margin-right: 10px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 
-	.icon {
-		width: 20px;
-		height: 20px;
-		margin-left: 5px;
-	}
+	//.icon {
+		//width: 20px;
+		//height: 20px;
+		//margin-left: 5px;
+	//}
 }
 
 .timer-control.stop {
@@ -176,7 +176,7 @@ $highlight: #D6F0FF !default;
 	border-radius: 3px;
 
 	.icon {
-		background: url('/img/stop.svg') no-repeat;
+		//background: url('/img/stop.svg') no-repeat;
 	}
 }
 
@@ -187,7 +187,7 @@ $highlight: #D6F0FF !default;
 	border-radius: 3px;
 
 	.icon {
-		background: url('/img/start.svg') no-repeat;
+		//background: url('/img/start.svg') no-repeat;
 	}
 }
 
@@ -197,7 +197,7 @@ $highlight: #D6F0FF !default;
 	background: linear-gradient(296.82deg, #219653 -0.37%, #5FE898 96.52%);
 	border-radius: 3px;
 	.icon {
-		background: url('/img/skip.svg') no-repeat;
+		//background: url('/img/skip.svg') no-repeat;
 	}
 }
 
@@ -210,7 +210,9 @@ $highlight: #D6F0FF !default;
 	background-color: white;
 
 	.control-group {
-
+		display: flex;
+		justify-content: center;
+		margin-top: 20px;
 	}
 }
 
@@ -370,6 +372,8 @@ $highlight: #D6F0FF !default;
 	box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.30);
 	background-color: $completed;
 	color: white;
+	position: relative;
+	z-index: 3;
 }
 
 @media(min-width: 930px) {
@@ -426,6 +430,11 @@ $highlight: #D6F0FF !default;
 	  align-items: center;
 	}
 
+	.note {
+		.control-group {
+			justify-content: flex-start;
+		}
+	}
 	.timer-control {
 	  padding: 5px 20px;
 	}
