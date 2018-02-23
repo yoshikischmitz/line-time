@@ -15,7 +15,7 @@ function className(isDropping){
 	return "note " + (isDropping ? "dropping" : "")
 }
 
-export default ({updatedAt, chunks}) => (
+export default ({updatedAt, chunks, id}) => (
 	<div className = "note-timer-container">
 		<Droppable droppableId="droppable">
 			{(provided, snapshot) => (
@@ -33,7 +33,7 @@ export default ({updatedAt, chunks}) => (
 							if(index + 1 === chunks.length){
 								last = true;
 							}
-							return <Chunk index={index} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
+							return <Chunk noteId={id} index={index} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
 						})
 					}
 					{provided.placeholder}

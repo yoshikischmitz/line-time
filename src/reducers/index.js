@@ -154,7 +154,6 @@ function addChunk(state, action){
 	if(chunk.intervalContent.length === 0){
 
 		return {
-			...state, 
 			chunks: {
 				...state.chunks,
 				[action.id] : {
@@ -168,19 +167,15 @@ function addChunk(state, action){
 	} else {
 		const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
 
-		const newChunkId = uuid()
+		const newChunkId = action.newChunkId
 		const newChunkContent = currentContent.set('blockMap', bottom)
 		const newChunkEditor = EditorState.createWithContent(newChunkContent)
 	  const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
-
-		const newChunks = insertAt(state.notes[state.currentNote].chunks, action.id, newChunkId, 1)
 
     const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
     const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
 
 		return {
-			...state, 
-			notes: updateCurrentNote(state, {chunks: newChunks}), 
 			chunks: {
 				...state.chunks,
 				[action.id] : {
@@ -226,9 +221,6 @@ function mergeChunkUp(state, action){
 		const upperChunk = state.chunks[upperChunkId]
 		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
 
-		const chunks = [...currentNote.chunks]
-		chunks.splice(currentChunkIndex, 1)
-
 		return {
 			...state, 
 			chunks: {
@@ -239,7 +231,6 @@ function mergeChunkUp(state, action){
 				},
 				[chunkId]: null
 			}, 
-			notes: updateCurrentNote(state, {chunks: chunks}),
 			focus: upperChunkId
 		}
 	} else if(currentChunk.intervalContent.length > 0) {
@@ -418,16 +409,36 @@ function tick(state){
 	return endTimer(state)
 }
 
+
+function notes(state = {}, action){
+	const note = state[action.noteId]
+	switch(action.type){
+		case(AddChunk):{
+		  const newChunks = insertAt(note.chunks, action.id, action.newChunkId, 1)
+	    const noteUpdate = {...note, chunks: newChunks}
+			return {...state, [action.noteId]: noteUpdate}
+		}
+		default: {
+		  return state
+		}
+	}
+}
+
 export default (state = initialState, action) => {
 	switch(action.type){
 		case(UpdateChunk): {
 			return updateChunk(state, action.id, action.editorState)
 		}
 		case(AddChunk):{
-			return addChunk(state, action)
+	    const noteUpdate = notes(state.notes, action)
+			return {...state, notes: noteUpdate, ...addChunk(state, action)}
 		}
 		case(MergeChunkUp):{
-			return mergeChunkUp(state, action)
+			const currentNote = state.notes[state.currentNote]
+			const chunks = [...currentNote.chunks]
+			const currentChunkIndex = chunks.indexOf(action.id)
+			chunks.splice(currentChunkIndex, 1)
+			return {...state, ...mergeChunkUp(state, action), notes: updateCurrentNote(state, {chunks: chunks})}
 		}
 		case(StartTimer):{
 			return toggleTimer(state, action)

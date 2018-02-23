@@ -17,11 +17,14 @@ import {
 	ToggleSidebar
 } from './types'
 
+import uuid from 'uuid'
+
 export function tick(){
 	return {
 		type: Tick
 	}
 }
+
 export function updateChunkState(chunkId, editorState){
 	return {
 		type: UpdateChunk,
@@ -30,10 +33,12 @@ export function updateChunkState(chunkId, editorState){
 	}
 }
 
-export function addChunk(chunkId, editorState, intervalContent, intervalSeconds){
+export function addChunk(chunkId, noteId, editorState, intervalContent, intervalSeconds){
 	return {
 		type: AddChunk,
 		id: chunkId,
+		noteId: noteId,
+		newChunkId: uuid(),
 		intervalContent: intervalContent,
 		intervalSeconds: intervalSeconds,
 		editorState: editorState

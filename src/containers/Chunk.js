@@ -115,7 +115,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				const text = getText(state)
 				const interval = matchTime(text)
 				if(interval){
-			    dispatch(addChunk(ownProps.id, state, interval.text, interval.seconds))
+			    dispatch(addChunk(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
 				  return 'handled'
 				}
 			} else if(command === 'backspace-at-start'){

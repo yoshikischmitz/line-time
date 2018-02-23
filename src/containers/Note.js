@@ -18,7 +18,8 @@ const mapStateToProps = (state, ownProps) => {
 
 	return {
 		chunks: renderChunks,
-		updatedAt: state.notes[ownProps.id].updatedAt
+		updatedAt: state.notes[ownProps.id].updatedAt,
+		id: ownProps.id
 	}
 }
 
