@@ -218,7 +218,7 @@ function mergeChunkUp(state, action){
 	const editorState = currentChunk.editorState
 
 	// extract this:
-	const contentWithInterval = insertTextAtCursor(editorState, currentChunk.intervalContent)
+	const contentWithInterval = insertTextAtCursor(editorState, "[" + currentChunk.intervalContent + "]")
   const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
 
 	if(upperChunkIndex >= 0){

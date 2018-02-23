@@ -155,7 +155,7 @@ $highlight: #D6F0FF !default;
 	font-size: 12px;
 	color: white;
 	border-radius: 2px;
-	padding: 5px 20px;
+	padding: 5px 10px;
 	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
 	margin-right: 10px;
 	display: flex;
@@ -203,11 +203,15 @@ $highlight: #D6F0FF !default;
 
 .note {
   width: 100%;
-	height: 85vh;
+	height: 95vh;
   display: flex;
   flex-direction: column;
 	overflow-y: scroll;
 	background-color: white;
+
+	.control-group {
+
+	}
 }
 
 .note.dropping {
@@ -420,5 +424,9 @@ $highlight: #D6F0FF !default;
 	.countdown {
 	  justify-content: flex-start;
 	  align-items: center;
+	}
+
+	.timer-control {
+	  padding: 5px 20px;
 	}
 }

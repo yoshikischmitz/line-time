@@ -40,8 +40,5 @@ export default ({updatedAt, chunks}) => (
 				</div>
 			)}
 		</Droppable>
-		<div className="timer-bar">
-			<Timer />
-		</div>
 	</div>
 )

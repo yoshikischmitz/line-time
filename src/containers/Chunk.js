@@ -1,10 +1,11 @@
 import {connect} from 'react-redux'
 import React from 'react'
 import CountDown from '../components/CountDown'
+import Timer from '../containers/Timer'
 import DisplayChunk from '../components/DisplayChunk.js'
 import { updateChunkState, addChunk, mergeChunkUp, focus, moveFocusUp, moveFocusDown } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
-import {parseTime} from '../utils'
+import {parseTime, findFirstIncompleteChunk} from '../utils'
 
 const TIME_BLOCK_REGEX = /^\[(.*)\]/;
 
@@ -123,11 +124,19 @@ const mapStateToProps = (state, ownProps) => {
 	const current = state.currentChunk === ownProps.id
 	let countdown
 
+	let controller
 	if(current){
 		countdown = <CountDown seconds={state.secondsRemaining} />
+		controller = <Timer />
 	}
 
-	return Object.assign({}, chunk, ownProps, {focused: focused, current: current, countdown: countdown})
+	const firstIncomplete = findFirstIncompleteChunk(state) === ownProps.id
+
+	if(!state.currentChunk && firstIncomplete && chunk.intervalSeconds > 0){
+	  controller = <Timer />
+	}
+
+	return Object.assign({}, chunk, ownProps, {focused: focused, current: current, countdown: countdown, controller: controller})
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)

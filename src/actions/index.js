@@ -34,7 +34,7 @@ export function addChunk(chunkId, editorState, intervalContent, intervalSeconds)
 	return {
 		type: AddChunk,
 		id: chunkId,
-		intervalContent: "[" + intervalContent + "]",
+		intervalContent: intervalContent,
 		intervalSeconds: intervalSeconds,
 		editorState: editorState
 	}

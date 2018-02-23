@@ -89,6 +89,7 @@ export default class DisplayChunk extends React.Component{
 									handleKeyCommand={(command) => handleKeyCommand(command, editorState)}
 									ref={ref => this.editorRef = ref}
 								/>
+								{ this.props.controller }
 							</div>
 						</div>
 					  {provided.placeholder}
