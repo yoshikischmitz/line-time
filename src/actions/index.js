@@ -45,9 +45,10 @@ export function addChunk(chunkId, noteId, editorState, intervalContent, interval
 	}
 }
 
-export function mergeChunkUp(chunkId){
+export function mergeChunkUp(chunkId, noteId){
 	return {
 		type: MergeChunkUp,
+		noteId: noteId,
 		id: chunkId
 	}
 }

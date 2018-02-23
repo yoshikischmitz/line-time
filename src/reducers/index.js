@@ -411,12 +411,18 @@ function tick(state){
 
 
 function notes(state = {}, action){
-	const note = state[action.noteId]
+	const noteId = action.noteId
+	const note = state[noteId]
+
 	switch(action.type){
-		case(AddChunk):{
-		  const newChunks = insertAt(note.chunks, action.id, action.newChunkId, 1)
-	    const noteUpdate = {...note, chunks: newChunks}
-			return {...state, [action.noteId]: noteUpdate}
+		case(AddChunk): {
+		  const addedChunks = insertAt(note.chunks, action.id, action.newChunkId, 1)
+			return {...state, [noteId]: {...note, chunks: addedChunks}}
+		}
+		case(MergeChunkUp): {
+			let mergedChunks = [...note.chunks]
+			mergedChunks.splice(mergedChunks.indexOf(action.id), 1)
+			return {...state, [noteId]: {...note, chunks: mergedChunks}}
 		}
 		default: {
 		  return state
@@ -425,20 +431,17 @@ function notes(state = {}, action){
 }
 
 export default (state = initialState, action) => {
+	const noteUpdate = notes(state.notes, action)
 	switch(action.type){
 		case(UpdateChunk): {
 			return updateChunk(state, action.id, action.editorState)
 		}
 		case(AddChunk):{
-	    const noteUpdate = notes(state.notes, action)
 			return {...state, notes: noteUpdate, ...addChunk(state, action)}
 		}
 		case(MergeChunkUp):{
-			const currentNote = state.notes[state.currentNote]
-			const chunks = [...currentNote.chunks]
-			const currentChunkIndex = chunks.indexOf(action.id)
-			chunks.splice(currentChunkIndex, 1)
-			return {...state, ...mergeChunkUp(state, action), notes: updateCurrentNote(state, {chunks: chunks})}
+			const newState = {...state, ...mergeChunkUp(state, action), notes: noteUpdate}
+			return newState
 		}
 		case(StartTimer):{
 			return toggleTimer(state, action)

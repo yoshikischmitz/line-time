@@ -119,7 +119,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				  return 'handled'
 				}
 			} else if(command === 'backspace-at-start'){
-				dispatch(mergeChunkUp(ownProps.id))
+				dispatch(mergeChunkUp(ownProps.id, ownProps.noteId))
 				return 'handled'
 			}
 			return 'not-handled'
@@ -142,11 +142,25 @@ const mapStateToProps = (state, ownProps) => {
 
 	const firstIncomplete = findFirstIncompleteChunk(state) === ownProps.id
 
+	const first = ownProps.previous === undefined
+	const last = ownProps.next === undefined
+
+	const previous = state.chunks[ownProps.previous]
+	const prevComplete = previous && previous.complete
+
 	if(!state.currentChunk && firstIncomplete && chunk.intervalSeconds > 0){
 	  controller = <Timer />
 	}
 
-	return Object.assign({}, chunk, ownProps, {focused: focused, current: current, countdown: countdown, controller: controller})
+	return {...chunk, ...ownProps, 
+		prevComplete: prevComplete, 
+		first: first, 
+		last: last, 
+		focused: focused, 
+		current: current, 
+		countdown: countdown, 
+		controller: controller
+	}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayChunk)

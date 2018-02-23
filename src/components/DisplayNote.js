@@ -24,16 +24,10 @@ export default ({updatedAt, chunks, id}) => (
 						{ updatedAt.toLocaleDateString("en-US", dateOptions) }
 					</div>
 					{
-						chunks.map((c, index) => {
-							let first = false
-							let last = false
-							if(index === 0){
-								first = true;
-							}
-							if(index + 1 === chunks.length){
-								last = true;
-							}
-							return <Chunk noteId={id} index={index} id={c.id} prevComplete={c.prevComplete} first={first} last={last}/>
+						chunks.map((chunkId, index) => {
+							const previous = chunks[index - 1]
+							const next = chunks[index + 1]
+							return <Chunk id={chunkId} noteId={id} index={index} previous={previous} next={next} />
 						})
 					}
 					{provided.placeholder}
