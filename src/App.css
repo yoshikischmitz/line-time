@@ -283,6 +283,9 @@ template {
   display: none !important; }
 
 /*# sourceMappingURL=bootstrap-reboot.css.map */
+.icon {
+  background-size: 20px !important; }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -297,7 +300,8 @@ template {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: nowrap; }
+  flex-wrap: nowrap;
+  z-index: 1; }
   .header .logo {
     height: 1em;
     margin-right: 10px; }
@@ -312,14 +316,19 @@ template {
   height: 95vh; }
 
 .notes {
-  display: flex;
+  position: fixed;
+  height: 100vh;
+  width: 80%;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+  transition: all .2s;
   flex-direction: column;
   overflow-y: scroll;
-  display: none;
-  height: 100%;
   border-right: 1px solid #E0E0E0;
   background-color: white;
   z-index: 3; }
+
+.notes.mobile-hide {
+  width: 0px; }
 
 .notes .note-preview {
   height: 70px;
@@ -568,8 +577,16 @@ template {
   color: white; }
 
 @media (min-width: 930px) {
+  .sidebar-toggle {
+    display: none !important; }
   .notes {
-    display: block;
+    height: 100%;
+    display: flex;
+    position: static;
+    width: 25%;
+    box-shadow: none; }
+  .notes.mobile-hide {
+    display: flex;
     width: 25%; }
   .note-timer-container {
     width: 75%;

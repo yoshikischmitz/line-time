@@ -2,9 +2,10 @@ import {connect} from 'react-redux'
 import React from 'react'
 import ClickableNote from './ClickableNote'
 
-const notes = ({notes, onNewNoteClick}) => {
+const notes = ({notes, onNewNoteClick, displayMobile}) => {
+	const className =  `notes ${displayMobile ? "mobile-show" : "mobile-hide" }`
 	return(
-		<div className="notes">
+		<div className={className}>
 			{ 
 				notes.map((note) => <ClickableNote key={note} id={note} />) 
 			}
@@ -20,7 +21,8 @@ const mapStateToProps = (state, ownProps) => {
 	})
 
 	return {
-		notes: notes
+		notes: notes,
+		displayMobile: state.showSidebarMobile
 	}
 }
 

@@ -21,6 +21,7 @@ import {
 	MoveFocusUp, 
 	MoveFocusDown, 
 	MoveChunk,
+	ToggleSidebar,
 	ChangeNote,
 	MakeNewNote
 } from '../actions/types'
@@ -93,6 +94,7 @@ function generateInitialState(){
 
 	return {
 		notificationsEnabled: Notification.permission === 'granted',
+		showSidebarMobile: false,
 		currentNote: current,
 		secondsRemaining: 0,
 		timerState: Stopped,
@@ -455,7 +457,7 @@ export default (state = initialState, action) => {
 			return moveChunk(state, action.id, action.index)
 		}
 		case(ChangeNote):{
-			return {...state, currentNote: action.id}
+			return {...state, currentNote: action.id, showSidebarMobile: false}
 		}
 		case(MakeNewNote):{
 			const newNote = uuid()
@@ -476,6 +478,9 @@ export default (state = initialState, action) => {
 					[newChunk] : emptyChunk()
 				}
 			}
+		}
+		case(ToggleSidebar):{
+			return {...state, showSidebarMobile: !state.showSidebarMobile}
 		}
 		default: {
 			return state

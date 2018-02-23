@@ -14,6 +14,7 @@ import {
 	MoveChunk,
 	ChangeNote,
 	MakeNewNote,
+	ToggleSidebar
 } from './types'
 
 export function tick(){
@@ -121,3 +122,9 @@ export function makeNewNote(){
 	}
 }
 
+
+export function toggleSidebar(){
+	return {
+		type: ToggleSidebar
+	}
+}
