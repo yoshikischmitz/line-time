@@ -8,7 +8,14 @@ import App from './components/App'
 import {tick} from  './actions'
 
 const middlewareWithThunk = applyMiddleware(thunk)
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers =
+  typeof window === 'object' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+			  actionsBlacklist: ['TICK']
+    }) : compose;
+
+
 const store = createStore(lineTimeApp, composeEnhancers(applyMiddleware(thunk)))
 
 setInterval(() => { store.dispatch(tick())}, 1000)
