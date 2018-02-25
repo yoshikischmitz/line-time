@@ -146,9 +146,7 @@ function insertAt(arr, findObj, insertObj, offset){
 
 // TODO change to acceptInterval
 function addChunk(state, action){
-	const intervalContent = action.intervalContent
-	const intervalSeconds = action.intervalSeconds
-	const chunk = state.chunks[action.id]
+	const chunk = state[action.id]
 	const editorState = action.editorState
 	const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
 	const currentContent = editorState.getCurrentContent()
@@ -162,20 +160,17 @@ function addChunk(state, action){
 	const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
 
 	return {
-		chunks: {
-			...state.chunks,
-			[action.id] : {
-				...chunk,
-				editorState: upperEditor
-			},
-			[newChunkId]: {
-				editorState: lowerEditor,
-				intervalContent: intervalContent,
-				intervalSeconds: intervalSeconds,
-				complete: false
-			}
-		}, 
-		focus: newChunkId
+		...state,
+		[action.id] : {
+			...chunk,
+			editorState: upperEditor
+		},
+		[newChunkId]: {
+			editorState: lowerEditor,
+			intervalContent: action.intervalContent,
+			intervalSeconds: action.intervalSeconds,
+			complete: false
+		}
 	}
 }
 
@@ -356,6 +351,14 @@ function tick(state){
 	return endTimer(state)
 }
 
+function chunks(state = {}, action){
+	switch(action.type){
+	  case(AddChunk): {
+			return addChunk(state, action)
+		}
+	}
+}
+
 
 function notes(state = {}, action){
 	const noteId = action.noteId
@@ -436,13 +439,14 @@ function changeInterval(state, action){
 
 export default (state = initialState, action) => {
 	const noteUpdate = notes(state.notes, action)
+	const chunksUpdate = chunks(state.chunks, action)
 
 	switch(action.type){
 		case(UpdateChunk): {
 			return {...state, notes: noteUpdate, chunks: updateChunk(state.chunks, action)}
 		}
 		case(AddChunk):{
-			return {...state, notes: noteUpdate, ...addChunk(state, action)}
+			return {...state, notes: noteUpdate, chunks: chunksUpdate, focus: action.newChunkId}
 		}
 	  case(ChangeInterval):{
 			return {...state, chunks: changeInterval(state, action)}
