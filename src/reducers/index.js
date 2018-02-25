@@ -23,7 +23,8 @@ import {
 	MoveChunk,
 	ToggleSidebar,
 	ChangeNote,
-	MakeNewNote
+	MakeNewNote,
+	ChangeInterval
 } from '../actions/types'
 
 import { 
@@ -149,48 +150,32 @@ function addChunk(state, action){
 	const intervalSeconds = action.intervalSeconds
 	const chunk = state.chunks[action.id]
 	const editorState = action.editorState
+	const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
 	const currentContent = editorState.getCurrentContent()
 
-	if(chunk.intervalContent.length === 0){
+	const newChunkId = action.newChunkId
+	const newChunkContent = currentContent.set('blockMap', bottom)
+	const newChunkEditor = EditorState.createWithContent(newChunkContent)
+	const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
 
-		return {
-			chunks: {
-				...state.chunks,
-				[action.id] : {
-					...chunk,
-					editorState: removeTextBeforeCursor(editorState),
-					intervalContent: intervalContent,
-					intervalSeconds: intervalSeconds
-				}
+	const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
+	const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
+
+	return {
+		chunks: {
+			...state.chunks,
+			[action.id] : {
+				...chunk,
+				editorState: upperEditor
+			},
+			[newChunkId]: {
+				editorState: lowerEditor,
+				intervalContent: intervalContent,
+				intervalSeconds: intervalSeconds,
+				complete: false
 			}
-		}
-	} else {
-		const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
-
-		const newChunkId = action.newChunkId
-		const newChunkContent = currentContent.set('blockMap', bottom)
-		const newChunkEditor = EditorState.createWithContent(newChunkContent)
-	  const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
-
-    const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
-    const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
-
-		return {
-			chunks: {
-				...state.chunks,
-				[action.id] : {
-					...chunk,
-					editorState: upperEditor
-				},
-				[newChunkId]: {
-					editorState: lowerEditor,
-					intervalContent: intervalContent,
-					intervalSeconds: intervalSeconds,
-					complete: false
-				}
-			}, 
-			focus: newChunkId
-		}
+		}, 
+		focus: newChunkId
 	}
 }
 
@@ -305,28 +290,7 @@ function moveFocus(state, offset){
 	return state
 }
 
-function moveChunk(state, id, index){
-	const note = state.notes[state.currentNote]
-	const indexOfDragged = note.chunks.indexOf(id)
-
-	const chunks = note.chunks.reduce((memo, x, chunkIndex) => {
-		if(chunkIndex === indexOfDragged){
-			return memo
-		}
-		if(chunkIndex === index){
-			if(chunkIndex < indexOfDragged){
-				return memo.concat(id, x)
-			} else {
-				return memo.concat(x, id)
-			}
-		}
-		return memo.concat(x)
-	}, [])
-
-	return {
-		...state, 
-		notes: updateCurrentNote(state, {updatedAt: new Date(), chunks: chunks})
-	}
+function moveChunk(state, noteId, chunkId, index){
 }
 
 function updateChunk(state, id, editorState){
@@ -424,20 +388,68 @@ function notes(state = {}, action){
 			mergedChunks.splice(mergedChunks.indexOf(action.id), 1)
 			return {...state, [noteId]: {...note, chunks: mergedChunks}}
 		}
+		case(MakeNewNote): {
+			const newChunk = action.chunkId
+			return {
+				...state,
+				[noteId]: {
+					chunks: [newChunk],
+					updatedAt: new Date()
+				}
+			}
+		}
+		case(MoveChunk): {
+			let movedChunks = [...note.chunks]
+
+			const indexOfDragged = movedChunks.indexOf(action.chunkId)
+
+			movedChunks.splice(indexOfDragged, 1)
+			movedChunks.splice(action.index, 0, action.chunkId)
+
+			return {
+				...state, 
+				[noteId] : {
+					...note, 
+					updatedAt: new Date(), 
+					chunks: movedChunks
+				}
+			}
+		}
 		default: {
 		  return state
 		}
 	}
 }
 
+function changeInterval(state, action){
+	const intervalContent = action.intervalContent
+	const intervalSeconds = action.intervalSeconds
+	const chunk = state.chunks[action.id]
+	const editorState = action.editorState
+
+	return {
+		...state.chunks,
+		[action.id] : {
+			...chunk,
+			editorState: removeTextBeforeCursor(editorState),
+			intervalContent: intervalContent,
+			intervalSeconds: intervalSeconds
+		}
+	}
+}
+
 export default (state = initialState, action) => {
 	const noteUpdate = notes(state.notes, action)
+
 	switch(action.type){
 		case(UpdateChunk): {
 			return updateChunk(state, action.id, action.editorState)
 		}
 		case(AddChunk):{
 			return {...state, notes: noteUpdate, ...addChunk(state, action)}
+		}
+	  case(ChangeInterval):{
+			return {...state, chunks: changeInterval(state, action)}
 		}
 		case(MergeChunkUp):{
 			const newState = {...state, ...mergeChunkUp(state, action), notes: noteUpdate}
@@ -468,30 +480,13 @@ export default (state = initialState, action) => {
 			return moveFocus(state, 1)
 		}
 		case(MoveChunk):{
-			return moveChunk(state, action.id, action.index)
+			return {...state, notes: noteUpdate}
 		}
 		case(ChangeNote):{
 			return {...state, currentNote: action.id, showSidebarMobile: false}
 		}
 		case(MakeNewNote):{
-			const newNote = uuid()
-			const newChunk = uuid()
-
-			return {
-				...state,
-				currentNote: newNote,
-				notes: {
-					...state.notes,
-					[newNote]: {
-						chunks: [newChunk],
-						updatedAt: new Date()
-					}
-				},
-				chunks: {
-					...state.chunks,
-					[newChunk] : emptyChunk()
-				}
-			}
+			return {...state, chunks: {...state.chunks, [action.chunkId] : emptyChunk() }, notes: noteUpdate, currentNote: action.noteId}
 		}
 		case(ToggleSidebar):{
 			return {...state, showSidebarMobile: !state.showSidebarMobile}

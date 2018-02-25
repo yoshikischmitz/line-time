@@ -14,7 +14,8 @@ import {
 	MoveChunk,
 	ChangeNote,
 	MakeNewNote,
-	ToggleSidebar
+	ToggleSidebar,
+	ChangeInterval
 } from './types'
 
 import uuid from 'uuid'
@@ -42,6 +43,17 @@ export function addChunk(chunkId, noteId, editorState, intervalContent, interval
 		intervalContent: intervalContent,
 		intervalSeconds: intervalSeconds,
 		editorState: editorState
+	}
+}
+
+export function changeInterval(chunkId, noteId, editorState, intervalContent, intervalSeconds) {
+	return {
+		type: ChangeInterval,
+		id: chunkId,
+		editorState: editorState,
+		noteId: noteId,
+		intervalContent: intervalContent,
+		intervalSeconds: intervalSeconds
 	}
 }
 
@@ -107,10 +119,11 @@ export function moveFocusDown(){
 	}
 }
 
-export function moveChunk(id, index){
+export function moveChunk(id, noteId, index){
 	return {
 		type: MoveChunk,
-		id: id,
+		chunkId: id,
+		noteId: noteId,
 		index: index
 	}
 }
@@ -124,7 +137,9 @@ export function changeNote(id){
 
 export function makeNewNote(){
 	return {
-		type: MakeNewNote
+		type: MakeNewNote,
+		noteId: uuid(),
+		chunkId: uuid()
 	}
 }
 

@@ -6,6 +6,7 @@ import DisplayChunk from '../components/DisplayChunk.js'
 import { 
 	updateChunkState, 
 	addChunk, 
+	changeInterval,
 	mergeChunkUp, 
 	focus, 
 	moveFocusUp, 
@@ -110,11 +111,15 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				e.preventDefault()
 			}
 		},
-		handleKeyCommand: (command, state) => {
+		handleKeyCommand: (command, state, noInterval) => {
 			if(command === 'space-after-interval'){
 				const text = getText(state)
 				const interval = matchTime(text)
-				if(interval){
+				const onlyChunk = ownProps.last === undefined && ownProps.next === undefined
+
+				if(interval && onlyChunk && noInterval){
+					dispatch(changeInterval(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
+				} else if(interval) {
 			    dispatch(addChunk(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
 				  return 'handled'
 				}
@@ -151,6 +156,7 @@ const mapStateToProps = (state, ownProps) => {
 	if(!state.currentChunk && firstIncomplete && chunk.intervalSeconds > 0){
 	  controller = <Timer />
 	}
+
 
 	return {...chunk, ...ownProps, 
 		prevComplete: prevComplete, 

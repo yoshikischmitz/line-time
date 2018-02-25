@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		onDragEnd: (result) => {
 			if(result.destination){
-				dispatch(moveChunk(result.draggableId, result.destination.index))
+				dispatch(moveChunk(result.draggableId, result.destination.droppableId, result.destination.index))
 			}
 		}
 	}

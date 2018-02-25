@@ -17,7 +17,7 @@ function className(isDropping){
 
 export default ({updatedAt, chunks, id}) => (
 	<div className = "note-timer-container">
-		<Droppable droppableId="droppable">
+		<Droppable droppableId={id}>
 			{(provided, snapshot) => (
 				<div className={className(snapshot.isDraggingOver)} ref={provided.innerRef}>
 					<div className="note-updated">

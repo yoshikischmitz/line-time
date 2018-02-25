@@ -86,7 +86,7 @@ export default class DisplayChunk extends React.Component{
 									editorState={ editorState } 
 									onChange={ onChange }
 									keyBindingFn={(e) => keyBindingFn(e, editorState)}
-									handleKeyCommand={(command) => handleKeyCommand(command, editorState)}
+									handleKeyCommand={(command) => handleKeyCommand(command, editorState, this.props.intervalContent.length === 0)}
 									ref={ref => this.editorRef = ref}
 								/>
 								{ this.props.controller }
