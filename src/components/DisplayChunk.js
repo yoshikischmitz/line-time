@@ -84,7 +84,7 @@ export default class DisplayChunk extends React.Component{
 							  { this.props.countdown }
 								<Editor 
 									editorState={ editorState } 
-									onChange={ onChange }
+									onChange={ (e) => onChange(editorState, e) }
 									keyBindingFn={(e) => keyBindingFn(e, editorState)}
 									handleKeyCommand={(command) => handleKeyCommand(command, editorState, this.props.intervalContent.length === 0)}
 									ref={ref => this.editorRef = ref}

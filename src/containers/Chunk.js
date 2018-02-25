@@ -53,8 +53,11 @@ function atStart(state){
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		onChange: (e) => {
-			 dispatch(updateChunkState(ownProps.id, e))
+		onChange: (oldEditorState, newEditorState) => {
+			const oldContent = oldEditorState.getCurrentContent()
+			const newContent = newEditorState.getCurrentContent()
+			const contentChanged = oldContent !== newContent
+  		 dispatch(updateChunkState(ownProps.id, ownProps.noteId, newEditorState, contentChanged))
 		},
 		keyBindingFn: (e, state) => {
 			if(e.keyCode === 32){

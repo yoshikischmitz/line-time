@@ -26,11 +26,13 @@ export function tick(){
 	}
 }
 
-export function updateChunkState(chunkId, editorState){
+export function updateChunkState(chunkId, noteId, editorState, contentChanged){
 	return {
 		type: UpdateChunk,
-		id: chunkId,
-		editorState: editorState
+		chunkId: chunkId,
+		noteId: noteId,
+		editorState: editorState,
+		contentChanged: contentChanged
 	}
 }
 

@@ -290,32 +290,15 @@ function moveFocus(state, offset){
 	return state
 }
 
-function moveChunk(state, noteId, chunkId, index){
-}
-
-function updateChunk(state, id, editorState){
-	const noteNeedsUpdate = (state.chunks[id].editorState.getCurrentContent() !== editorState.getCurrentContent())
-
-	let noteUpdate = {}
-	if(noteNeedsUpdate){
-		noteUpdate.updatedAt = new Date()
-	}
+function updateChunk(state, action){
+	const id = action.chunkId
+	const editorState = action.editorState
 
 	return {
-		...state,
-		notes: {
-			...state.notes,
-			[state.currentNote]: {
-				...state.notes[state.currentNote],
-				...noteUpdate
-			}
-		},
-		chunks: {
-			...state.chunks, 
-			[id]: {
-				...state.chunks[id], 
-				editorState: editorState
-			}
+		...state, 
+		[id]: {
+			...state[id], 
+			editorState: editorState
 		}
 	}
 }
@@ -415,6 +398,19 @@ function notes(state = {}, action){
 				}
 			}
 		}
+		case(UpdateChunk): {
+			if(action.contentChanged){
+				return {
+					...state,
+					[noteId] : {
+						...note,
+						updatedAt: new Date()
+					}
+				}
+			} else {
+				return state
+			}
+		}
 		default: {
 		  return state
 		}
@@ -443,7 +439,7 @@ export default (state = initialState, action) => {
 
 	switch(action.type){
 		case(UpdateChunk): {
-			return updateChunk(state, action.id, action.editorState)
+			return {...state, notes: noteUpdate, chunks: updateChunk(state.chunks, action)}
 		}
 		case(AddChunk):{
 			return {...state, notes: noteUpdate, ...addChunk(state, action)}
