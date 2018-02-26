@@ -538,7 +538,7 @@ template {
   width: 100%;
   height: 100%;
   position: relative;
-  background: url("./checkmark.svg") center/80% no-repeat; }
+  background: url("/img/checkmark.svg") center/80% no-repeat; }
 
 .countdown {
   display: flex;

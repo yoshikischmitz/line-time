@@ -2,23 +2,7 @@ import React from 'react'
 import { Editor } from 'draft-js'
 import { Draggable } from 'react-beautiful-dnd'
 import {abbreviateTime} from '../utils'
-
-export const Timeline = ({first, last, complete, prevComplete}) => {
-	const completeStyle = (complete) => (complete ? "complete" : "")
-	const firstStyle = first ? "first" : ""
-	const lastStyle = last ? "last" : ""
-	const style = (name, complete) => `timeline-${name} ${firstStyle} ${lastStyle} ${completeStyle(complete)}`
-	return(
-		<div className="timeline">
-			<div className={style('top', prevComplete)}></div>
-			<div className={complete ? "bullet complete" : "bullet"} >
-				<div className="inner">
-				</div>
-			</div>
-			<div className={style('bottom', complete)} ></div>
-		</div>
-	)
-}
+import  Timeline  from './Timeline'
 
 export default class DisplayChunk extends React.Component{
 	className(complete, current){
@@ -38,7 +22,7 @@ export default class DisplayChunk extends React.Component{
 				keyBindingFn, handleKeyCommand, complete, prevComplete, first, last} = this.props
 
 		return(
-			<Draggable draggableId={this.props.id} key={this.props.id} index={this.props.index}>
+			<Draggable draggableId={this.props.id} index={this.props.index}>
 				{(provided, snapshot) => (
 					<div>
 						<div 
