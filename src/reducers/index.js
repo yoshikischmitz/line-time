@@ -359,6 +359,9 @@ function chunks(state = {}, action){
 		case(UpdateChunk): {
 			return updateChunk(state, action)
 		}
+		default:{
+			return state
+		}
 	}
 }
 
@@ -440,22 +443,16 @@ function changeInterval(state, action){
 	}
 }
 
-export default (state = initialState, action) => {
-	const noteUpdate = notes(state.notes, action)
-	const chunksUpdate = chunks(state.chunks, action)
-
+function root(state = {}, action){
 	switch(action.type){
-		case(UpdateChunk): {
-			return {...state, notes: noteUpdate, chunks: chunksUpdate}
-		}
 		case(AddChunk):{
-			return {...state, notes: noteUpdate, chunks: chunksUpdate, focus: action.newChunkId}
+			return {...state, focus: action.newChunkId}
 		}
 	  case(ChangeInterval):{
 			return {...state, chunks: changeInterval(state, action)}
 		}
 		case(MergeChunkUp):{
-			const newState = {...state, ...mergeChunkUp(state, action), notes: noteUpdate}
+			const newState = {...state, ...mergeChunkUp(state, action)}
 			return newState
 		}
 		case(StartTimer):{
@@ -482,14 +479,11 @@ export default (state = initialState, action) => {
 		case(MoveFocusDown):{
 			return moveFocus(state, 1)
 		}
-		case(MoveChunk):{
-			return {...state, notes: noteUpdate}
-		}
 		case(ChangeNote):{
 			return {...state, currentNote: action.id, showSidebarMobile: false}
 		}
 		case(MakeNewNote):{
-			return {...state, chunks: {...state.chunks, [action.chunkId] : emptyChunk() }, notes: noteUpdate, currentNote: action.noteId}
+			return {...state, chunks: {...state.chunks, [action.chunkId] : emptyChunk() }, currentNote: action.noteId}
 		}
 		case(ToggleSidebar):{
 			return {...state, showSidebarMobile: !state.showSidebarMobile}
@@ -498,4 +492,14 @@ export default (state = initialState, action) => {
 			return state
 		}
 	}
+}
+
+export default (state = initialState, action) => {
+	const noteUpdate = notes(state.notes, action)
+	const chunksUpdate = chunks(state.chunks, action)
+
+	const merged = {...state, notes: noteUpdate, chunks: chunksUpdate}
+	const rootUpdate = root(merged, action)
+
+	return rootUpdate
 }
