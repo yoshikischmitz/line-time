@@ -45,10 +45,6 @@ function generateInitialState(){
 	const note3 = uuid()
 
 	const chunk1 = uuid()
-	const chunk2 = uuid()
-	const chunk3 = uuid()
-	const chunk4 = uuid()
-	const chunk5 = uuid()
 
 	return {
 		notificationsEnabled: Notification.permission === 'granted',
@@ -59,37 +55,22 @@ function generateInitialState(){
 		focus: chunk1,
 		notes: {
 			[current]: {
-				updatedAt: new Date('2017-01-20'),
-				chunks: [
-					chunk1,
-					chunk2,
-					chunk3,
-				]
-			},
-			[note2]: {
-				updatedAt: new Date('2017-01-20'),
-				chunks: [
-					chunk4
-				]
-			},
-			[note3] : {
 				updatedAt: new Date(),
 				chunks: [
-					chunk5
+					chunk1,
 				]
 			}
 		},
 		chunks: {
-			[chunk1] : chunk("25 minutes", "Lorem ipsum dolor sit amet, consectetuer \nadipiscing elit. Aenean commodo ligula eget dolor", false),
-			[chunk2] : chunk("25 minutes", "Aenean massa. Cum sociis \nnatoque penatibus et magnis dis parturient montes", true),
-			[chunk3] : chunk("25 minutes", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", true),
-			[chunk4] : chunk("25 minutes", "DDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, vDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamenenatis vitae, justo. Nullam", true),
-			[chunk5] : chunk("25 minutes", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, iDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullammperdiet a, venenatis vitae, justo. Nullam", true)
+			[chunk1] : chunk("5 minutes", "Welcome to LineTime", false),
 		}
 	}
 }
 
-const initialState = getStateFromLocalStorage()
+let initialState = getStateFromLocalStorage()
+if(initialState === undefined){
+	initialState = generateInitialState()
+}
 
 function updateCurrentNote(state, update){
 	return {
