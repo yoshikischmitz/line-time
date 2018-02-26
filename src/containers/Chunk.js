@@ -118,12 +118,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			if(command === 'space-after-interval'){
 				const text = getText(state)
 				const interval = matchTime(text)
-				const first = ownProps.previous === undefined
-				const last = ownProps.next === undefined
-				const next = ownProps.next
 
 				if(interval){
-					if((first && noInterval) || (first && last)){
+					if(noInterval){
 					  dispatch(changeInterval(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
 						return 'handled'
 					} else {
