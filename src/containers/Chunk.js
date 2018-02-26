@@ -118,14 +118,19 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			if(command === 'space-after-interval'){
 				const text = getText(state)
 				const interval = matchTime(text)
-				const onlyChunk = ownProps.last === undefined && ownProps.next === undefined
+				const first = ownProps.previous === undefined
+				const last = ownProps.next === undefined
+				const next = ownProps.next
 
-				if(interval && onlyChunk && noInterval){
-					dispatch(changeInterval(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
-				} else if(interval) {
-			    dispatch(addChunk(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
-				  return 'handled'
-				}
+				if(interval){
+					if((first && noInterval) || (first && last)){
+					  dispatch(changeInterval(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
+						return 'handled'
+					} else {
+			      dispatch(addChunk(ownProps.id, ownProps.noteId, state, interval.text, interval.seconds))
+						return 'handled'
+					} 
+				} 
 			} else if(command === 'backspace-at-start'){
 				dispatch(mergeChunkUp(ownProps.id, ownProps.previous, ownProps.noteId))
 				return 'handled'

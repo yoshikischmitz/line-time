@@ -125,9 +125,9 @@ function generateInitialState(){
 		chunks: {
 			[chunk1] : chunk("25 minutes", "Lorem ipsum dolor sit amet, consectetuer \nadipiscing elit. Aenean commodo ligula eget dolor", false),
 			[chunk2] : chunk("25 minutes", "Aenean massa. Cum sociis \nnatoque penatibus et magnis dis parturient montes", true),
-			[chunk3] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", true),
-			[chunk4] : chunk("25 mintues", "DDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, vDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamenenatis vitae, justo. Nullam", true),
-			[chunk5] : chunk("25 mintues", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, iDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullammperdiet a, venenatis vitae, justo. Nullam", true)
+			[chunk3] : chunk("25 minutes", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam", true),
+			[chunk4] : chunk("25 minutes", "DDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, vDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullamenenatis vitae, justo. Nullam", true),
+			[chunk5] : chunk("25 minutes", "Donec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, iDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. NullamDonec pede justo, \nfringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullammperdiet a, venenatis vitae, justo. Nullam", true)
 		}
 	}
 }
@@ -352,6 +352,9 @@ function chunks(state = {}, action){
 		case(MergeChunkUp): {
 			return mergeChunkUp(state, action)
 		}
+	  case(ChangeInterval):{
+			return changeInterval(state, action)
+		}
 		default:{
 			return state
 		}
@@ -370,7 +373,9 @@ function notes(state = {}, action){
 		}
 		case(MergeChunkUp): {
 			let mergedChunks = [...note.chunks]
-			mergedChunks.splice(mergedChunks.indexOf(action.chunkId), 1)
+			if(action.upperChunkId){
+			  mergedChunks.splice(mergedChunks.indexOf(action.chunkId), 1)
+			}
 			return {...state, [noteId]: {...note, chunks: mergedChunks}}
 		}
 		case(MakeNewNote): {
@@ -422,11 +427,11 @@ function notes(state = {}, action){
 function changeInterval(state, action){
 	const intervalContent = action.intervalContent
 	const intervalSeconds = action.intervalSeconds
-	const chunk = state.chunks[action.id]
+	const chunk = state[action.id]
 	const editorState = action.editorState
 
 	return {
-		...state.chunks,
+		...state,
 		[action.id] : {
 			...chunk,
 			editorState: removeTextBeforeCursor(editorState),
@@ -440,9 +445,6 @@ function root(state = {}, action){
 	switch(action.type){
 		case(AddChunk):{
 			return {...state, focus: action.newChunkId}
-		}
-	  case(ChangeInterval):{
-			return {...state, chunks: changeInterval(state, action)}
 		}
 		case(MergeChunkUp):{
 			let focus = state.focus
