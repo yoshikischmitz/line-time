@@ -65,7 +65,6 @@ function addChunk(state, action){
 	}
 }
 
-
 function updateChunk(state, action){
 	const id = action.chunkId
 	const editorState = action.editorState
@@ -167,4 +166,3 @@ export default (state = {}, action) => {
 		}
 	}
 }
-
