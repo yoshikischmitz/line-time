@@ -9,8 +9,7 @@ import {
 	changeInterval,
 	mergeChunkUp, 
 	focus, 
-	moveFocusUp, 
-	moveFocusDown 
+	moveFocus
 } from '../actions'
 import {getDefaultKeyBinding} from 'draft-js';
 import {
@@ -99,14 +98,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 				if(anchorKey === startKey){
 					if(e.key === 'ArrowUp' && anchorOffset === 0){
-						e.preventDefault()
-						dispatch(moveFocusUp())
+						if(ownProps.previous){
+							e.preventDefault()
+							dispatch(moveFocus(ownProps.previous, true))
+						}
 					}
 				} 
 				if(anchorKey === endKey){
 					if(e.key === 'ArrowDown' && (anchorOffset === lastBlockLength || lastBlockLength === 0)){
-						e.preventDefault()
-						dispatch(moveFocusDown())
+						if(ownProps.next){
+							e.preventDefault()
+							dispatch(moveFocus(ownProps.next, false))
+						}
 					}
 				}
 			}

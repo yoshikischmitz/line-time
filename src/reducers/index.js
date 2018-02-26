@@ -18,8 +18,7 @@ import {
 	Tick, 
 	Focus, 
 	GotPermission, 
-	MoveFocusUp, 
-	MoveFocusDown, 
+	MoveFocus,
 	MoveChunk,
 	ToggleSidebar,
 	ChangeNote,
@@ -246,35 +245,6 @@ function toggleTimer(state, action){
 	}
 }
 
-function moveFocus(state, offset){
-	const note = state.notes[state.currentNote]
-	const chunk = state.chunks[state.focus]
-
-	if(note.chunks.length <= 1){
-		return state
-	}
-
-	const chunkIndex = note.chunks.indexOf(state.focus)
-  const newIndex = chunkIndex + offset
-
-	if(0 <= newIndex < note.chunks.length){
-		const newFocus = note.chunks[newIndex]
-		const newFocusChunk = state.chunks[newFocus]
-
-		let editorUpdate
-		if(offset < 0){
-			editorUpdate = moveToEnd(newFocusChunk.editorState)
-		} else {
-			editorUpdate = moveToStart(newFocusChunk.editorState)
-		}
-
-		const chunkWithNewSelect = {...newFocusChunk, editorState: editorUpdate}
-
-		return {...state, focus: newFocus, ...state.chunks, [newFocus]: chunkWithNewSelect}
-	}
-	return state
-}
-
 function updateChunk(state, action){
 	const id = action.chunkId
 	const editorState = action.editorState
@@ -357,6 +327,18 @@ function chunks(state = {}, action){
 		}
 		case(MakeNewNote):{
 		  return {...state, [action.chunkId] : emptyChunk()}
+		}
+		case(MoveFocus): {
+			let func
+			if(action.up){
+				func = moveToEnd
+			} else {
+				func = moveToStart
+			}
+
+			const focusChunk = state[action.to]
+			const editorUpdate = func(focusChunk.editorState)
+			return {...state, [action.to]: {...focusChunk, editorState: editorUpdate}}
 		}
 		default:{
 			return state
@@ -468,17 +450,14 @@ function root(state = {}, action){
 		case(Tick): {
 			return tick(state)
 		}
+		case(MoveFocus) : {
+			return {...state, focus: action.to}
+		}
 		case(Focus):{
 			return {...state, focus: action.id}
 		}
 		case(GotPermission):{
 			return {...state, notificationsEnabled: true}
-		}
-		case(MoveFocusUp):{
-			return moveFocus(state, -1)
-		}
-		case(MoveFocusDown):{
-			return moveFocus(state, 1)
 		}
 		case(ChangeNote):{
 			return {...state, currentNote: action.id, showSidebarMobile: false}

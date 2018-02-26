@@ -9,8 +9,7 @@ import {
 	Focus, 
 	RequestNotifications, 
 	GotPermission, 
-	MoveFocusUp, 
-	MoveFocusDown, 
+	MoveFocus, 
 	MoveChunk,
 	ChangeNote,
 	MakeNewNote,
@@ -110,15 +109,11 @@ export function requestNotifications(){
 	}
 }
 
-export function moveFocusUp(){
+export function moveFocus(to, up){
 	return {
-		type: MoveFocusUp
-	}
-}
-
-export function moveFocusDown(){
-	return {
-		type: MoveFocusDown
+		to: to,
+		up: up,
+		type: MoveFocus
 	}
 }
 
