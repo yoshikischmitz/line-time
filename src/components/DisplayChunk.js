@@ -34,18 +34,6 @@ export default class DisplayChunk extends React.Component{
 		super(props)
 	}
 
-	componentDidMount(){
-		if(this.props.focused){
-		  this.editorRef.focus()
-		}
-	}
-
-	componentDidUpdate(prevProps){
-		if(this.props.focused){
-		  this.editorRef.focus()
-		}
-	}
-
 	className(complete, current){
 		let classes = ["chunk"]
 		if(complete){
