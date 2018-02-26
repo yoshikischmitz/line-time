@@ -107,20 +107,18 @@ function generateInitialState(){
 					chunk1,
 					chunk2,
 					chunk3,
-					chunk4,
-					chunk5
 				]
 			},
 			[note2]: {
 				updatedAt: new Date('2017-01-20'),
 				chunks: [
-					chunk2
+					chunk4
 				]
 			},
 			[note3] : {
 				updatedAt: new Date(),
 				chunks: [
-					chunk3
+					chunk5
 				]
 			}
 		},
@@ -152,12 +150,14 @@ function addChunk(state, action){
 	const currentContent = editorState.getCurrentContent()
 
 	const newChunkId = action.newChunkId
-	const newChunkContent = currentContent.set('blockMap', bottom)
-	const newChunkEditor = EditorState.createWithContent(newChunkContent)
-	const editorWithDecorator = EditorState.set(newChunkEditor, {decorator: compositeDecorator})
+	const bottomContent = currentContent.set('blockMap', bottom)
+	const bottomEditor = EditorState.createWithContent(bottomContent)
+	const bottomWithFocus = EditorState.forceSelection(bottomEditor, editorState.getSelection())
+	const bottomWithDecorator = EditorState.set(bottomWithFocus, {decorator: compositeDecorator})
 
 	const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
-	const lowerEditor = moveToStart(removeTextBeforeCursor(EditorState.push(editorState, currentContent.set('blockMap', bottom), 'new-chunk')))
+
+	const lowerEditor = moveToStart(removeTextBeforeCursor(bottomWithDecorator))
 
 	return {
 		...state,
@@ -356,6 +356,9 @@ function chunks(state = {}, action){
 	  case(AddChunk): {
 			return addChunk(state, action)
 		}
+		case(UpdateChunk): {
+			return updateChunk(state, action)
+		}
 	}
 }
 
@@ -443,7 +446,7 @@ export default (state = initialState, action) => {
 
 	switch(action.type){
 		case(UpdateChunk): {
-			return {...state, notes: noteUpdate, chunks: updateChunk(state.chunks, action)}
+			return {...state, notes: noteUpdate, chunks: chunksUpdate}
 		}
 		case(AddChunk):{
 			return {...state, notes: noteUpdate, chunks: chunksUpdate, focus: action.newChunkId}
