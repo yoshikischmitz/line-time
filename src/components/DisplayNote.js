@@ -1,6 +1,7 @@
 import React from 'react'
 import Chunk from '../containers/Chunk'
 import { Droppable } from 'react-beautiful-dnd';
+import NotificationButton from './NotificationButton'
 
 const dateOptions = { 
 	year: 'numeric', 
@@ -19,8 +20,11 @@ export default ({updatedAt, chunks, id}) => (
 		<Droppable droppableId={id}>
 			{(provided, snapshot) => (
 				<div className={className(snapshot.isDraggingOver)} ref={provided.innerRef}>
-					<div className="note-updated">
-						{ updatedAt.toLocaleDateString("en-US", dateOptions) }
+					<div className="note-header">
+						<div className="note-updated">
+							{ updatedAt.toLocaleDateString("en-US", dateOptions) }
+						</div>
+						<NotificationButton />
 					</div>
 					{
 						chunks.map((chunkId, index) => {

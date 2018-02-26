@@ -118,14 +118,23 @@ $highlight: #D6F0FF !default;
 	z-index: 1;
 }
 
-.note-updated {
+.note-header {
 	text-align: center;
 	width: 100%;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	text-align: center;
 	color: #828282;
 	background-color: white;
 	font-size: 0.7em;
+}
+
+.notification-button {
+	text-align: center;
+	cursor: pointer;
+}
+
+.note-updated {
 	user-select: none;
 }
 

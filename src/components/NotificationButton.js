@@ -4,9 +4,9 @@ import {requestNotifications} from '../actions'
 
 const notificationButton = ({enabled, onClick}) => {
 	if(enabled){
-		return(<div onClick={() => new Notification("Notifications are working!")}className="notification-button enabled"></div>)
+		return(<a onClick={() => new Notification("Notifications are working!")}className="notification-button enabled">Notifications enabled</a>)
 	} else {
-		return(<div className="notification-button disabled" onClick={onClick}></div>)
+		return(<a className="notification-button disabled" onClick={onClick}>Enable notifications</a>)
 	}
 }
 

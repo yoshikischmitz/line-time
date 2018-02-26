@@ -39,6 +39,7 @@ function chunk(intervalText, text, complete){
 	}
 }
 
+const notificationsEnabled = Notification.permission === 'granted'
 function generateInitialState(){
 	const current = uuid()
 	const note2 = uuid()
@@ -47,7 +48,7 @@ function generateInitialState(){
 	const chunk1 = uuid()
 
 	return {
-		notificationsEnabled: Notification.permission === 'granted',
+		notificationsEnabled: notificationsEnabled,
 		showSidebarMobile: false,
 		currentNote: current,
 		secondsRemaining: 0,
@@ -67,7 +68,7 @@ function generateInitialState(){
 	}
 }
 
-let initialState = getStateFromLocalStorage()
+let initialState = {...getStateFromLocalStorage(), notificationsEnabled: notificationsEnabled}
 if(initialState === undefined){
 	initialState = generateInitialState()
 }
