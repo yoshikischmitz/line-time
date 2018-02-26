@@ -187,7 +187,7 @@ function updateCurrentNote(state, update){
 function mergeChunkUp(state, action){
 	const chunkId = action.chunkId
 	const upperChunkId = action.upperChunkId
-	const currentChunk = state.chunks[chunkId]
+	const currentChunk = state[chunkId]
 	const editorState = currentChunk.editorState
 
 	// extract this:
@@ -195,33 +195,26 @@ function mergeChunkUp(state, action){
   const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
 
 	if(upperChunkId){
-		const upperChunk = state.chunks[upperChunkId]
+		const upperChunk = state[upperChunkId]
 		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
 
 		return {
 			...state, 
-			chunks: {
-				...state.chunks,
-				[upperChunkId] : {
-					...upperChunk,
-					editorState: mergedEditor
-				},
-				[chunkId]: null
-			}, 
-			focus: upperChunkId
+			[upperChunkId] : {
+				...upperChunk,
+				editorState: mergedEditor
+			},
+			[chunkId]: null
 		}
 	} else if(currentChunk.intervalContent.length > 0) {
 
 		return {
-			...state, 
-			chunks: {
-				...state.chunks,
-				[chunkId]: {
-					...currentChunk,
-					editorState: editorWithInterval,
-					intervalContent: "",
-					intervalSeconds: 0
-				}
+			...state,
+			[chunkId]: {
+				...currentChunk,
+				editorState: editorWithInterval,
+				intervalContent: "",
+				intervalSeconds: 0
 			}
 		}
 	}
@@ -356,6 +349,9 @@ function chunks(state = {}, action){
 		case(UpdateChunk): {
 			return updateChunk(state, action)
 		}
+		case(MergeChunkUp): {
+			return mergeChunkUp(state, action)
+		}
 		default:{
 			return state
 		}
@@ -449,8 +445,11 @@ function root(state = {}, action){
 			return {...state, chunks: changeInterval(state, action)}
 		}
 		case(MergeChunkUp):{
-			const newState = {...state, ...mergeChunkUp(state, action)}
-			return newState
+			let focus = state.focus
+			if(action.upperChunkId){
+				focus = action.upperChunkId
+			}
+			return {...state, focus: focus}
 		}
 		case(StartTimer):{
 			return toggleTimer(state, action)
