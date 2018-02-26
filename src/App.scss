@@ -220,6 +220,14 @@ $highlight: #D6F0FF !default;
 	background-color: $light-grey;
 }
 
+.note.dropping .timeline-top {
+	background-color: transparent;
+}
+
+.note.dropping .timeline-bottom {
+	background-color: transparent;
+}
+
 .chunk {
   display: flex;
   flex-direction: row;

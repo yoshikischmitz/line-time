@@ -440,6 +440,12 @@ template {
 .note.dropping {
   background-color: #E0E0E0; }
 
+.note.dropping .timeline-top {
+  background-color: transparent; }
+
+.note.dropping .timeline-bottom {
+  background-color: transparent; }
+
 .chunk {
   display: flex;
   flex-direction: row;
