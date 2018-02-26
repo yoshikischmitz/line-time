@@ -59,11 +59,12 @@ export function changeInterval(chunkId, noteId, editorState, intervalContent, in
 	}
 }
 
-export function mergeChunkUp(chunkId, noteId){
+export function mergeChunkUp(chunkId, upperChunkId, noteId){
 	return {
 		type: MergeChunkUp,
-		noteId: noteId,
-		id: chunkId
+		chunkId: chunkId,
+		upperChunkId: upperChunkId,
+		noteId: noteId
 	}
 }
 

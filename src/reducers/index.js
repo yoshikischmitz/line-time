@@ -185,19 +185,16 @@ function updateCurrentNote(state, update){
 }
 
 function mergeChunkUp(state, action){
-	const currentNote = state.notes[state.currentNote]
-	const chunkId = action.id
+	const chunkId = action.chunkId
+	const upperChunkId = action.upperChunkId
 	const currentChunk = state.chunks[chunkId]
-	const currentChunkIndex = currentNote.chunks.indexOf(chunkId)
-	const upperChunkIndex = currentChunkIndex - 1
 	const editorState = currentChunk.editorState
 
 	// extract this:
 	const contentWithInterval = insertTextAtCursor(editorState, "[" + currentChunk.intervalContent + "]")
   const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
 
-	if(upperChunkIndex >= 0){
-		const upperChunkId = currentNote.chunks[upperChunkIndex]
+	if(upperChunkId){
 		const upperChunk = state.chunks[upperChunkId]
 		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
 
@@ -377,7 +374,7 @@ function notes(state = {}, action){
 		}
 		case(MergeChunkUp): {
 			let mergedChunks = [...note.chunks]
-			mergedChunks.splice(mergedChunks.indexOf(action.id), 1)
+			mergedChunks.splice(mergedChunks.indexOf(action.chunkId), 1)
 			return {...state, [noteId]: {...note, chunks: mergedChunks}}
 		}
 		case(MakeNewNote): {

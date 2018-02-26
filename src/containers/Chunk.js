@@ -127,7 +127,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				  return 'handled'
 				}
 			} else if(command === 'backspace-at-start'){
-				dispatch(mergeChunkUp(ownProps.id, ownProps.noteId))
+				dispatch(mergeChunkUp(ownProps.id, ownProps.previous, ownProps.noteId))
 				return 'handled'
 			}
 			return 'not-handled'
