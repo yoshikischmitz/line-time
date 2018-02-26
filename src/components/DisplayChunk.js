@@ -3,6 +3,7 @@ import { Editor } from 'draft-js'
 import {highlightBlue, darkGrey} from '../colors'
 import { Draggable } from 'react-beautiful-dnd'
 import { Icon } from '@doist/reactist'
+import {abbreviateTime} from '../utils'
 
 const borderWidth = (complete) => complete ? "6px" : "4px"
 const borderColor = (complete) => complete ? highlightBlue : darkGrey
@@ -77,7 +78,7 @@ export default class DisplayChunk extends React.Component{
 									{ intervalContent }
 								</div>
 								<div  className="interval-short">
-									{ intervalContent }
+									{ abbreviateTime(intervalContent) }
 								</div>
 						  </div>
 							<Timeline first={first} last={last} complete={complete} prevComplete={prevComplete}/>

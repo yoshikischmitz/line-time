@@ -9,6 +9,15 @@ import {
 import React from 'react'
 import humanInterval from 'human-interval'
 
+export function abbreviateTime(interval){
+	const abbreviationMap = [['hours', 'hrs'], ['hour', 'hr'], ['minutes', 'min.'], ['minute', 'min'], ['seconds', 's'], ['second', ['s']]]
+	const abbreviatedInterval = abbreviationMap.reduce((textMemo, abbrevPair) => {
+		const long = abbrevPair[0]
+		const short = abbrevPair[1]
+		return textMemo.replace(long, short)
+	}, interval)
+	return abbreviatedInterval
+}
 
 export function emptyChunk(){
 	return {
