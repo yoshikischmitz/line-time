@@ -109,3 +109,4 @@ export const selectionCollapsed = (state) => {
 	const collapsed = (selection.getAnchorKey() === selection.getFocusKey()) && (selection.getAnchorOffset() === selection.getFocusOffset())
 	return collapsed
 }
+

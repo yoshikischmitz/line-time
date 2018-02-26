@@ -1,5 +1,23 @@
+import {
+	EditorState, 
+	ContentState, 
+	Modifier, 
+	CompositeDecorator, 
+	SelectionState
+} from 'draft-js'
+
 import React from 'react'
 import humanInterval from 'human-interval'
+
+
+export function emptyChunk(){
+	return {
+		intervalContent: "",
+		intervalSeconds: 0,
+		complete: false,
+		editorState: EditorState.set(EditorState.createEmpty(), {decorator: compositeDecorator})
+	}
+}
 
 export const firstLineStrategy = (contentBlock, callback, contentState) => {
 	if(contentBlock.getKey() === contentState.getFirstBlock().getKey()){
@@ -9,6 +27,20 @@ export const firstLineStrategy = (contentBlock, callback, contentState) => {
 }
 
 export const firstLineSpan = (props) => <span style={{fontWeight: "bold"}} className="first-line">{ props.children }</span>
+
+
+export const compositeDecorator = new CompositeDecorator([
+	{
+		strategy: firstLineStrategy,
+		component: firstLineSpan
+	}
+])
+
+export function editorFromText(text){
+	const content = ContentState.createFromText(text)
+	const editorState =  EditorState.createWithContent(content)
+	return EditorState.set(editorState, {decorator: compositeDecorator})
+}
 
 export function parseTime(timeText){
 	const time = humanInterval(timeText)

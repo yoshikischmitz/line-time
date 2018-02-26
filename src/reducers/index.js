@@ -1,5 +1,7 @@
 import uuid from 'uuid'
 
+import chunks from './chunks'
+
 import {
 	EditorState, 
 	ContentState, 
@@ -9,8 +11,8 @@ import {
 } from 'draft-js'
 
 import {
-	UpdateChunk, 
 	AddChunk, 
+	UpdateChunk, 
 	MergeChunkUp, 
 	StartTimer, 
 	SkipTimer,
@@ -41,36 +43,15 @@ import {
 
 import {
 	parseTime, 
-	firstLineStrategy, 
-	firstLineSpan,
-  findFirstIncompleteChunk
+	compositeDecorator,
+	editorFromText,
+	findFirstIncompleteChunk,
+	emptyChunk
 } from '../utils'
 
 const Playing = 'Playing'
 const Paused = 'Paused'
 const Stopped = 'Stopped'
-
-const compositeDecorator = new CompositeDecorator([
-	{
-		strategy: firstLineStrategy,
-		component: firstLineSpan
-	}
-])
-
-function editorFromText(text){
-	const content = ContentState.createFromText(text)
-	const editorState =  EditorState.createWithContent(content)
-	return EditorState.set(editorState, {decorator: compositeDecorator})
-}
-
-function emptyChunk(){
-	return {
-		intervalContent: "",
-		intervalSeconds: 0,
-		complete: false,
-		editorState: EditorState.set(EditorState.createEmpty(), {decorator: compositeDecorator})
-	}
-}
 
 function chunk(intervalText, text, complete){
 	return {
@@ -141,37 +122,6 @@ function insertAt(arr, findObj, insertObj, offset){
   return newArr
 }
 
-// TODO change to acceptInterval
-function addChunk(state, action){
-	const chunk = state[action.id]
-	const editorState = action.editorState
-	const {top, bottom} = splitEditor(editorState, editorState.getSelection().getAnchorKey())
-	const currentContent = editorState.getCurrentContent()
-
-	const newChunkId = action.newChunkId
-	const bottomContent = currentContent.set('blockMap', bottom)
-	const bottomEditor = EditorState.createWithContent(bottomContent)
-	const bottomWithFocus = EditorState.forceSelection(bottomEditor, editorState.getSelection())
-	const bottomWithDecorator = EditorState.set(bottomWithFocus, {decorator: compositeDecorator})
-
-	const upperEditor = moveToEnd(EditorState.push(editorState, currentContent.set('blockMap', top), 'new-chunk'))
-
-	const lowerEditor = moveToStart(removeTextBeforeCursor(bottomWithDecorator))
-
-	return {
-		...state,
-		[action.id] : {
-			...chunk,
-			editorState: upperEditor
-		},
-		[newChunkId]: {
-			editorState: lowerEditor,
-			intervalContent: action.intervalContent,
-			intervalSeconds: action.intervalSeconds,
-			complete: false
-		}
-	}
-}
 
 function updateCurrentNote(state, update){
 	return {
@@ -181,43 +131,6 @@ function updateCurrentNote(state, update){
 			...update
 		}
 	}
-}
-
-function mergeChunkUp(state, action){
-	const chunkId = action.chunkId
-	const upperChunkId = action.upperChunkId
-	const currentChunk = state[chunkId]
-	const editorState = currentChunk.editorState
-
-	// extract this:
-	const contentWithInterval = insertTextAtCursor(editorState, "[" + currentChunk.intervalContent + "]")
-  const editorWithInterval = EditorState.push(editorState, contentWithInterval, 'add-chunk')
-
-	if(upperChunkId){
-		const upperChunk = state[upperChunkId]
-		const mergedEditor = mergeEditors(upperChunk.editorState, editorWithInterval)
-
-		return {
-			...state, 
-			[upperChunkId] : {
-				...upperChunk,
-				editorState: mergedEditor
-			},
-			[chunkId]: null
-		}
-	} else if(currentChunk.intervalContent.length > 0) {
-
-		return {
-			...state,
-			[chunkId]: {
-				...currentChunk,
-				editorState: editorWithInterval,
-				intervalContent: "",
-				intervalSeconds: 0
-			}
-		}
-	}
-	return state
 }
 
 function startNextTimer(state){
@@ -241,19 +154,6 @@ function toggleTimer(state, action){
 		}
 		case(Stopped):{
 			return startNextTimer(state)
-		}
-	}
-}
-
-function updateChunk(state, action){
-	const id = action.chunkId
-	const editorState = action.editorState
-
-	return {
-		...state, 
-		[id]: {
-			...state[id], 
-			editorState: editorState
 		}
 	}
 }
@@ -310,42 +210,6 @@ function tick(state){
 
 	return endTimer(state)
 }
-
-function chunks(state = {}, action){
-	switch(action.type){
-	  case(AddChunk): {
-			return addChunk(state, action)
-		}
-		case(UpdateChunk): {
-			return updateChunk(state, action)
-		}
-		case(MergeChunkUp): {
-			return mergeChunkUp(state, action)
-		}
-	  case(ChangeInterval):{
-			return changeInterval(state, action)
-		}
-		case(MakeNewNote):{
-		  return {...state, [action.chunkId] : emptyChunk()}
-		}
-		case(MoveFocus): {
-			let func
-			if(action.up){
-				func = moveToEnd
-			} else {
-				func = moveToStart
-			}
-
-			const focusChunk = state[action.to]
-			const editorUpdate = func(focusChunk.editorState)
-			return {...state, [action.to]: {...focusChunk, editorState: editorUpdate}}
-		}
-		default:{
-			return state
-		}
-	}
-}
-
 
 function notes(state = {}, action){
 	const noteId = action.noteId
@@ -405,23 +269,6 @@ function notes(state = {}, action){
 		}
 		default: {
 		  return state
-		}
-	}
-}
-
-function changeInterval(state, action){
-	const intervalContent = action.intervalContent
-	const intervalSeconds = action.intervalSeconds
-	const chunk = state[action.id]
-	const editorState = action.editorState
-
-	return {
-		...state,
-		[action.id] : {
-			...chunk,
-			editorState: removeTextBeforeCursor(editorState),
-			intervalContent: intervalContent,
-			intervalSeconds: intervalSeconds
 		}
 	}
 }
