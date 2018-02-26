@@ -8,16 +8,24 @@ const borderWidth = (complete) => complete ? "6px" : "4px"
 const borderColor = (complete) => complete ? highlightBlue : darkGrey
 const border = (needsBorder, complete) => (needsBorder ? {borderLeft: `solid ${ borderColor(complete) } ${ borderWidth(complete) }`} : {})
 
-function timelineTopStyle(first, complete){
-	const completeStyle = complete ? "complete" : ""
-	const firstStyle = first ? "first" : ""
-	return `timeline-top ${firstStyle} ${completeStyle}` 
+function timelineStyle(name, first, last, complete){
 }
 
-function timelineBottomStyle(last, complete){
-	const completeStyle = complete ? "complete" : ""
+export const Timeline = ({first, last, complete, prevComplete}) => {
+	const completeStyle = (complete) => (complete ? "complete" : "")
+	const firstStyle = first ? "first" : ""
 	const lastStyle = last ? "last" : ""
-	return `timeline-bottom ${lastStyle} ${completeStyle}` 
+	const style = (name, complete) => `timeline-${name} ${firstStyle} ${lastStyle} ${completeStyle(complete)}`
+	return(
+		<div className="timeline">
+			<div className={style('top', prevComplete)}></div>
+			<div className={complete ? "bullet complete" : "bullet"} >
+				<div className="inner">
+				</div>
+			</div>
+			<div className={style('bottom', complete)} ></div>
+		</div>
+	)
 }
 
 export default class DisplayChunk extends React.Component{
@@ -72,14 +80,7 @@ export default class DisplayChunk extends React.Component{
 									{ intervalContent }
 								</div>
 						  </div>
-							<div className="timeline">
-								<div className={timelineTopStyle(first, prevComplete)}></div>
-								<div className={complete ? "bullet complete" : "bullet"} >
-									<div className="inner">
-									</div>
-								</div>
-								<div className={timelineBottomStyle(last, complete)} ></div>
-							</div>
+							<Timeline first={first} last={last} complete={complete} prevComplete={prevComplete}/>
 							<div className="editor" onKeyDown={(e) => this.props.onKeyDown(e, this.props.editorState)}>
 							  { this.props.countdown }
 								<Editor 
