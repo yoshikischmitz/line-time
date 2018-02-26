@@ -1,16 +1,7 @@
 import React from 'react'
 import { Editor } from 'draft-js'
-import {highlightBlue, darkGrey} from '../colors'
 import { Draggable } from 'react-beautiful-dnd'
-import { Icon } from '@doist/reactist'
 import {abbreviateTime} from '../utils'
-
-const borderWidth = (complete) => complete ? "6px" : "4px"
-const borderColor = (complete) => complete ? highlightBlue : darkGrey
-const border = (needsBorder, complete) => (needsBorder ? {borderLeft: `solid ${ borderColor(complete) } ${ borderWidth(complete) }`} : {})
-
-function timelineStyle(name, first, last, complete){
-}
 
 export const Timeline = ({first, last, complete, prevComplete}) => {
 	const completeStyle = (complete) => (complete ? "complete" : "")
@@ -30,10 +21,6 @@ export const Timeline = ({first, last, complete, prevComplete}) => {
 }
 
 export default class DisplayChunk extends React.Component{
-	constructor(props){
-		super(props)
-	}
-
 	className(complete, current){
 		let classes = ["chunk"]
 		if(complete){

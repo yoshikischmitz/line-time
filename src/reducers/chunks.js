@@ -1,17 +1,9 @@
 import {
 	EditorState, 
-	ContentState, 
-	Modifier, 
-	CompositeDecorator, 
-	SelectionState
 } from 'draft-js'
 
 import { 
-	blocksFromSelection, 
-	selectTillEnd, 
-	appendBlocks, 
 	insertTextAtCursor, 
-	blocksToString,
 	moveToEnd,
 	moveToStart,
 	mergeEditors,
@@ -29,7 +21,6 @@ import {
 	UpdateChunk, 
 	MergeChunkUp, 
 	MoveFocus,
-	ChangeNote,
 	MakeNewNote,
 	ChangeInterval
 } from '../actions/types'

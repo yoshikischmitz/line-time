@@ -1,6 +1,4 @@
 import React from 'react'
-import CountDown from './CountDown'
-import NotificationButton from './NotificationButton'
 
 const stateMap = {
 	'Playing' : 'Pause',

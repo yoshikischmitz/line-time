@@ -7,7 +7,6 @@ import {
 	SkipTimer,
 	Tick, 
 	Focus, 
-	RequestNotifications, 
 	GotPermission, 
 	MoveFocus, 
 	MoveChunk,

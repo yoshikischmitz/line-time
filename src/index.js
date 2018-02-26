@@ -7,7 +7,6 @@ import lineTimeApp from './reducers'
 import App from './components/App'
 import {tick} from  './actions'
 
-const middlewareWithThunk = applyMiddleware(thunk)
 const composeEnhancers =
   typeof window === 'object' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?

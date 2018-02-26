@@ -1,7 +1,6 @@
 import React from 'react'
 import Chunk from '../containers/Chunk'
 import { Droppable } from 'react-beautiful-dnd';
-import Timer from '../containers/Timer'
 
 const dateOptions = { 
 	year: 'numeric', 

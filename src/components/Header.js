@@ -19,7 +19,7 @@ const header = ({onNewNoteClick}) => (
 			<Icon className="plus" onClick={onNewNoteClick} image="/img/plus.svg" />
 			<Icon className="trash-can" onClick={onNewNoteClick} image="/img/trash-can.svg" />
 	  </div>
-		<img className="logo" src="/img/header-logo.svg" />
+		<img alt="Linetime" className="logo" src="/img/header-logo.svg" />
 	</div>
 )
 

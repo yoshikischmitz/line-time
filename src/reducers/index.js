@@ -4,16 +4,7 @@ import chunks from './chunks'
 import notes from './notes'
 
 import {
-	EditorState, 
-	ContentState, 
-	Modifier, 
-	CompositeDecorator, 
-	SelectionState
-} from 'draft-js'
-
-import {
 	AddChunk, 
-	UpdateChunk, 
 	MergeChunkUp, 
 	StartTimer, 
 	SkipTimer,
@@ -22,29 +13,13 @@ import {
 	Focus, 
 	GotPermission, 
 	MoveFocus,
-	MoveChunk,
 	ToggleSidebar,
 	ChangeNote,
 	MakeNewNote,
-	ChangeInterval
 } from '../actions/types'
-
-import { 
-	blocksFromSelection, 
-	selectTillEnd, 
-	appendBlocks, 
-	insertTextAtCursor, 
-	blocksToString,
-	moveToEnd,
-	moveToStart,
-	mergeEditors,
-	splitEditor,
-	removeTextBeforeCursor
-} from '../utils/draftUtils'
 
 import {
 	parseTime, 
-	compositeDecorator,
 	editorFromText,
 	findFirstIncompleteChunk,
 	emptyChunk
@@ -147,6 +122,9 @@ function toggleTimer(state, action){
 		case(Stopped):{
 			return startNextTimer(state)
 		}
+		default:{
+			return state
+		}
 	}
 }
 
@@ -192,7 +170,7 @@ function endTimer(state) {
 }
 
 function tick(state){
-	if(state.timerState != Playing){
+	if(state.timerState !== Playing){
 		return state
 	}
 

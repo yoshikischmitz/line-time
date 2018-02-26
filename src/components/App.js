@@ -4,8 +4,6 @@ import '../App.css';
 import CurrentNote from '../containers/CurrentNote'
 import Notes from '../containers/Notes'
 import Header from '../components/Header'
-import NotificationButton from '../components/NotificationButton'
-import Timer from '../containers/Timer'
 import { DragDropContext } from 'react-beautiful-dnd';
 import { moveChunk } from '../actions'
 

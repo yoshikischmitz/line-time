@@ -1,9 +1,7 @@
 import {
 	EditorState, 
 	ContentState, 
-	Modifier, 
 	CompositeDecorator, 
-	SelectionState
 } from 'draft-js'
 
 import React from 'react'

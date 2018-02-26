@@ -90,7 +90,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 				const anchorOffset = selection.getAnchorOffset()
 				const focusOffset = selection.getFocusOffset()
 
-				if(anchorKey != focusKey || anchorOffset != focusOffset){
+				if(anchorKey !== focusKey || anchorOffset !== focusOffset){
 					return 
 				}
 

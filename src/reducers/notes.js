@@ -2,18 +2,8 @@ import {
 	AddChunk, 
 	UpdateChunk, 
 	MergeChunkUp, 
-	StartTimer, 
-	SkipTimer,
-	StopTimer,
-	Tick, 
-	Focus, 
-	GotPermission, 
-	MoveFocus,
 	MoveChunk,
-	ToggleSidebar,
-	ChangeNote,
-	MakeNewNote,
-	ChangeInterval
+	MakeNewNote
 } from '../actions/types'
 
 function insertAt(arr, findObj, insertObj, offset){
