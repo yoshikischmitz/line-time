@@ -27,7 +27,7 @@ export default ({updatedAt, chunks, id}) => (
 						chunks.map((chunkId, index) => {
 							const previous = chunks[index - 1]
 							const next = chunks[index + 1]
-							return <Chunk id={chunkId} noteId={id} index={index} previous={previous} next={next} />
+							return <Chunk key={chunkId} id={chunkId} noteId={id} index={index} previous={previous} next={next} />
 						})
 					}
 					{provided.placeholder}
