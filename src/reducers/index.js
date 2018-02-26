@@ -22,7 +22,8 @@ import {
 	parseTime, 
 	editorFromText,
 	findFirstIncompleteChunk,
-	emptyChunk
+	emptyChunk,
+	getStateFromLocalStorage
 } from '../utils'
 
 const Playing = 'Playing'
@@ -88,7 +89,7 @@ function generateInitialState(){
 	}
 }
 
-const initialState = generateInitialState()
+const initialState = getStateFromLocalStorage()
 
 function updateCurrentNote(state, update){
 	return {
@@ -228,7 +229,6 @@ function root(state = {}, action){
 		}
 	}
 }
-
 export default (state = initialState, action) => {
 	const noteUpdate = notes(state.notes, action)
 	const chunksUpdate = chunks(state.chunks, action)

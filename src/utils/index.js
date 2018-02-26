@@ -2,10 +2,59 @@ import {
 	EditorState, 
 	ContentState, 
 	CompositeDecorator, 
+	convertToRaw,
+	convertFromRaw
 } from 'draft-js'
 
 import React from 'react'
 import humanInterval from 'human-interval'
+
+const storage = window.localStorage
+
+function convert(entities, strategy){
+	let converted = {}
+	Object.keys(entities).forEach((x) => {
+		const entity = entities[x]
+		const conversion = strategy(entity)
+		converted[x] = {...entity, ...conversion}
+	})
+	return converted
+}
+
+export function getStateFromLocalStorage(){
+	const stateString = storage.getItem('line-time-state')
+	if(stateString){
+		const state = JSON.parse(stateString)
+		const chunks = deserializeChunks(state.chunks)
+		const notes = deserializeNotes(state.notes)
+		return {...state, chunks: chunks, notes: notes}
+	}
+}
+
+export function deserializeNotes(notes){
+	return convert(notes, (note) => (
+		{
+			updatedAt: new Date(note.updatedAt)
+		}
+	))
+}
+
+export function serializeChunks(chunks){
+	return convert(chunks, (chunk) => (
+		{
+			editorState: convertToRaw(chunk.editorState.getCurrentContent())
+		}
+	))
+}
+
+export function deserializeChunks(chunks) {
+	return convert(chunks, (chunk) => {
+		const content = convertFromRaw(chunk.editorState)
+		return { 
+			editorState: EditorState.createWithContent(content, compositeDecorator)
+		}
+	})
+}
 
 export function abbreviateTime(interval){
 	const abbreviationMap = [['hours', 'hrs'], ['hour', 'hr'], ['minutes', 'min.'], ['minute', 'min'], ['seconds', 's'], ['second', ['s']]]
