@@ -355,6 +355,9 @@ function chunks(state = {}, action){
 	  case(ChangeInterval):{
 			return changeInterval(state, action)
 		}
+		case(MakeNewNote):{
+		  return {...state, [action.chunkId] : emptyChunk()}
+		}
 		default:{
 			return state
 		}
@@ -481,7 +484,7 @@ function root(state = {}, action){
 			return {...state, currentNote: action.id, showSidebarMobile: false}
 		}
 		case(MakeNewNote):{
-			return {...state, chunks: {...state.chunks, [action.chunkId] : emptyChunk() }, currentNote: action.noteId}
+			return {...state, currentNote: action.noteId}
 		}
 		case(ToggleSidebar):{
 			return {...state, showSidebarMobile: !state.showSidebarMobile}
