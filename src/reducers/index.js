@@ -40,12 +40,20 @@ function chunk(intervalText, text, complete){
 }
 
 const notificationsEnabled = Notification.permission === 'granted'
+
 function generateInitialState(){
 	const current = uuid()
 	const note2 = uuid()
 	const note3 = uuid()
 
 	const chunk1 = uuid()
+	const chunk2 = uuid()
+	const chunk3 = uuid()
+	const chunk4 = uuid()
+	const chunk5 = uuid()
+	const chunk6 = uuid()
+	const chunk7 = uuid()
+	const chunk8 = uuid()
 
 	return {
 		notificationsEnabled: notificationsEnabled,
@@ -59,11 +67,25 @@ function generateInitialState(){
 				updatedAt: new Date(),
 				chunks: [
 					chunk1,
+					chunk2,
+					chunk3,
+					chunk4,
+					chunk5,
+					chunk6,
+					chunk7,
+					chunk8
 				]
 			}
 		},
 		chunks: {
-			[chunk1] : chunk("5 minutes", "Welcome to LineTime", false),
+			[chunk1] : chunk("25 minutes", "Work", false),
+			[chunk2] : chunk("5 minutes", "Take a break", false),
+			[chunk3] : chunk("25 minutes", "Work", false),
+			[chunk4] : chunk("5 minutes", "Take a break", false),
+			[chunk5] : chunk("25 minutes", "Work", false),
+			[chunk6] : chunk("5 minutes", "Take a break", false),
+			[chunk7] : chunk("25 minutes", "Work", false),
+			[chunk8] : chunk("20 minutes", "Take a long break", false),
 		}
 	}
 }
